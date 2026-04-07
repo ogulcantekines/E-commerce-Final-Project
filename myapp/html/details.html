@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} {{ product.name }} - Detay {% endblock %}
+{% block content %}
+<main class="container my-5">
+    <div class="row align-items-stretch g-5">
+        <div class="col-md-5">
+            <div id="productCarousel" class="carousel slide carousel-dark h-100 d-flex align-items-center bg-white product-img-container">
+                <div class="carousel-inner">
+                    <div class="carousel-item active text-center">
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" class="img-fluid h-100" alt="{{ product.name }}" />
+                        {% else %}
+                            <img src="{% static 'images/default.jpg' %}" class="img-fluid h-100" alt="Görsel Yok" />
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-7">
+            <div class="card border-0 h-100">
+                <div class="card-body p-0 d-flex flex-column h-100">
+                    <p class="text-muted small mb-1">{{ product.category.name }} / {{ product.brand }}</p>
+
+                    <h2 class="fw-bold mb-4" style="color: #243474">
+                        {{ product.name }}
+                    </h2>
+
+                    <div class="p-4 mb-4 rounded-4 shadow-sm" style="background-color: #f8f9fa; border-left: 6px solid #0d6efd;">
+                        <span class="display-5 fw-bold text-primary">{{ product.price }}</span>
+                        <span class="fs-3 fw-bold text-primary">TL</span>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="fw-bold mb-3">Ürün Hakkında</h6>
+                        <p class="text-secondary" style="line-height: 1.8; font-size: 0.95rem">
+                            {{ product.description|linebreaks }}
+                        </p>
+                    </div>
+
+                    <div class="mt-auto">
+                        <div class="d-flex gap-2 mb-4 detail-action-group">
+                            <a href="{% url 'add_to_cart' product.id %}" class="text-decoration-none d-flex flex-grow-1">
+    <button class="btn btn-primary flex-grow-1 py-3 rounded-pill fw-bold" style="background-color: #243474; border: none">
+        <i class="fa-solid fa-cart-shopping me-2"></i> Sepete Ekle
+    </button>
+</a>
+                            <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 55px; height: 55px">
+                                <i class="fa-regular fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock content %}

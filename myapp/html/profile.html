@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="card-body p-5">
+                    <h2 class="fw-bold mb-4 text-center">Profil Bilgilerim</h2>
+                    <hr class="mb-4">
+                    <form method="POST">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Telefon Numarası</label>
+                            <input type="text" name="phone" class="form-control rounded-pill px-4" 
+                                   placeholder="05xx xxx xx xx" value="{{ profile.phone|default:'' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Şehir</label>
+                            <input type="text" name="city" class="form-control rounded-pill px-4" 
+                                   placeholder="Örn: İstanbul" value="{{ profile.city|default:'' }}">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Teslimat Adresi</label>
+                            <textarea name="address" class="form-control rounded-4 px-4 py-3" 
+                                      rows="3" placeholder="Siparişlerinizin gönderileceği açık adres...">{{ profile.address|default:'' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold mt-3 shadow">
+                            Değişiklikleri Kaydet
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

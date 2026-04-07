@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Ödeme ve Onay {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row g-4">
+        <div class="col-md-8">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+                <h3 class="fw-bold mb-4">Teslimat Bilgileri</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Telefon</label>
+                        <input type="text" name="phone" class="form-control rounded-pill px-4" 
+                               value="{{ profile.phone|default:'' }}" required placeholder="05xx xxx xx xx">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Şehir</label>
+                        <input type="text" name="city" class="form-control rounded-pill px-4" 
+                               value="{{ profile.city|default:'' }}" required placeholder="Örn: İstanbul">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">Açık Adres</label>
+                        <textarea name="address" class="form-control rounded-4 px-4 py-3" 
+                                  rows="3" required placeholder="Siparişinizin teslim edileceği tam adres...">{{ profile.address|default:'' }}</textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold mt-3 shadow-sm">
+                        Siparişi Tamamla ve Öde
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4 text-center bg-light" style="border-radius: 20px;">
+                <h4 class="fw-bold mb-3">Sipariş Özeti</h4>
+                <hr>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="text-secondary">Genel Toplam:</span>
+                    <h3 class="text-primary fw-bold mb-0">{{ total_price }} TL</h3>
+                </div>
+                <p class="small text-muted">Ödeme işlemi kapıda nakit veya kart ile yapılacaktır.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

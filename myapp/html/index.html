@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Ana Sayfa{% endblock title %}
+{% block content %}
+    <main>
+      <div class="container">
+        <section>
+          <div id="carouselExample" class="carousel slide carousel-dark">
+            <div class="carousel-inner">
+        {% for slider in sliders %}
+            <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                {% if slider.image %}
+                    <img src="{{ slider.image.url }}" class="d-block w-100" alt="{{ slider.title }}" style="max-height: 500px; object-fit: cover;">
+                {% endif %}
+            </div>
+        {% empty %}
+            <div class="carousel-item active">
+                <img src="{% static 'images/macbook.jpg' %}" class="d-block w-100" alt="Varsayılan">
+            </div>
+        {% endfor %}
+    </div>
+            <button
+              class="carousel-control-prev"
+              type="button"
+              data-bs-target="#carouselExample"
+              data-bs-slide="prev"
+            >
+              <span
+                class="carousel-control-prev-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button
+              class="carousel-control-next"
+              type="button"
+              data-bs-target="#carouselExample"
+              data-bs-slide="next"
+            >
+              <span
+                class="carousel-control-next-icon"
+                aria-hidden="true"
+              ></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+          </div>
+        </section>
+        <section class="mt-5">
+          <h1 class="text-danger fs-5">Öne Çıkan Ürünler</h1>
+       <div class="row mt-5">
+    
+    {% for product in products %}
+    <div class="col-lg-3 col-md-4 col-sm-6 mb-4"> <div class="card h-100 shadow-sm" style="border-radius: 15px">
+        
+        {% if product.image %}
+          <img src="{{ product.image.url }}" class="card-img-top p-3" alt="{{ product.name }}" style="height: 250px; object-fit: contain;" />
+        {% else %}
+          <img src="{% static 'images/default.jpg' %}" class="card-img-top p-3" alt="Resim Yok" />
+        {% endif %}
+
+        <div class="card-body">
+          <p class="card-text fw-semibold text-dark" style="font-size: 0.95rem">
+            {{ product.name }} </p>
+
+          <div class="mt-3">
+            <span class="fw-bold text-primary fs-2">{{ product.price }}</span>
+            <span class="fw-bold text-primary fs-5">TL</span>
+          </div>
+        </div>
+
+        <div class="card-footer bg-transparent border-top-0 d-flex gap-2 pb-3">
+          <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-primary rounded-pill flex-grow-1 fw-bold">
+            İncele
+          </a>
+          <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary rounded-circle">
+    <i class="fa-solid fa-cart-shopping"></i>
+</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    </div>
+        </section>
+      </div>
+    </main>
+{% endblock content %}

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} Giriş Yap / Üye Ol {% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden;">
+                <div class="card-body p-0">
+                    <ul class="nav nav-tabs nav-justified border-bottom-0" id="loginTab" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active fw-bold py-3 text-dark border-0" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">
+                                Giriş Yap
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link fw-bold py-3 text-dark border-0" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">
+                                Üye Ol
+                            </button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content p-4" id="loginTabContent">
+                        
+                        <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                            <form action="{% url 'user_account' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3 mt-3">
+                                    <input type="email" name="email" class="form-control bg-light border-0 py-3" placeholder="E-mail" required />
+                                </div>
+                                <div class="mb-2">
+                                    <input type="password" name="sifre" class="form-control bg-light border-0 py-3" placeholder="Şifre" required />
+                                </div>
+                                <div class="mb-3 text-end">
+                                    <a href="{% url 'password_reset' %}" class="text-muted small" style="text-decoration: none;">Şifremi Unuttum?</a>
+                                </div>
+                                <button type="submit" name="login_submit" class="btn btn-primary w-100 py-3 fw-bold" style="background-color: #243474; border: none">
+                                    Giriş Yap
+                                </button>
+                            </form>
+                        </div>
+
+                        <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                            <form action="{% url 'user_account' %}" method="POST">
+                                {% csrf_token %}
+                                <div class="mb-3 mt-3">
+                                    <input type="text" name="ad_soyad" class="form-control bg-light border-0 py-3" placeholder="Ad Soyad" required />
+                                </div>
+                                <div class="mb-3">
+                                    <input type="email" name="email" class="form-control bg-light border-0 py-3" placeholder="E-Posta" required />
+                                </div>
+                                <div class="mb-3">
+                                    <input type="password" name="sifre" class="form-control bg-light border-0 py-3" placeholder="Şifre" required />
+                                </div>
+                                <div class="mb-4">
+                                    <input type="password" name="sifre_dogrula" class="form-control bg-light border-0 py-3" placeholder="Şifre Doğrulama" required />
+                                </div>
+                                <button type="submit" name="register_submit" class="btn btn-primary w-100 py-3 fw-bold" style="background-color: #243474; border: none">
+                                    Üyeliği Tamamla
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .nav-tabs .nav-link.active {
+        background-color: #ffffff !important;
+        border-bottom: 3px solid #243474 !important;
+        color: #243474 !important;
+    }
+    .nav-tabs .nav-link {
+        background-color: #f8f9fa;
+        border-radius: 0;
+    }
+</style>
+{% endblock content %}
