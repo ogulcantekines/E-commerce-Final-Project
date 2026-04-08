@@ -122,3 +122,9 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 # Test aşamasında e-postaların terminale düşmesini sağlar
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+# Giriş yapmadan korumalı sayfaya gidilirse buraya yönlendir
+LOGIN_URL = '/hesap/'
+
+# Default primary key field type
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
