@@ -1,2 +1,2 @@
-pywatchman==3.0.0
-wheel==0.46.3
+Django>=6.0,<7.0
+Pillow>=10.0
