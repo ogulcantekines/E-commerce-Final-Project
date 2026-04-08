@@ -181,4 +181,14 @@ def orders(request):
 @login_required
 def change_password(request):
     if request.method == 'POST':
-        form = Password
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Oturum açık kalsın
+            messages.success(request, 'Şifreniz başarıyla değiştirildi!')
+            return redirect('profile')
+        else:
+            messages.error(request, 'Lütfen hataları düzeltin.')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {'form': form})
