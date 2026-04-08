@@ -90,11 +90,13 @@ def cart(request):
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price, 'categories': categories})
 
 def add_to_cart(request, product_id):
-    p_id = str(product_id)
+    product = get_object_or_404(Product, id=product_id)
+    p_id = str(product.id)
     cart_session = request.session.get('cart', {})
     cart_session[p_id] = cart_session.get(p_id, 0) + 1
     request.session['cart'] = cart_session
     request.session.modified = True
+    messages.success(request, f"{product.name} sepete eklendi!")
     return redirect('cart')
 
 def remove_from_cart(request, product_id):
@@ -120,7 +122,8 @@ def search(request):
     query = request.GET.get('q', '').strip()
     categories = Category.objects.all()
     products = Product.objects.filter(Q(name__icontains=query) | Q(brand__icontains=query)) if query else Product.objects.none()
-    return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories})
+    available_brands = products.values_list('brand', flat=True).distinct() if query else []
+    return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories, 'available_brands': available_brands})
 
 # --- ÖDEME VE PROFİL ---
 @login_required
