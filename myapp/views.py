@@ -129,17 +129,39 @@ def checkout_view(request):
     cart = request.session.get('cart', {})
     if not cart: return redirect('index')
     
+    # Toplam fiyatı hesapla (session'da {product_id: quantity} formatında)
+    cart_items = []
     total_price = Decimal('0.00')
-    for item in cart.values(): total_price += Decimal(str(item['price'])) * item['quantity']
+    for product_id, quantity in cart.items():
+        try:
+            product = Product.objects.get(id=int(product_id))
+            item_total = product.price * quantity
+            total_price += item_total
+            cart_items.append({'product': product, 'quantity': quantity, 'item_total': item_total})
+        except Product.DoesNotExist:
+            continue
 
     if request.method == 'POST':
-        order = Order.objects.create(user=request.user, phone=request.POST.get('phone'), city=request.POST.get('city'), address=request.POST.get('address'), total_price=total_price, is_completed=True)
-        for product_id, item in cart.items():
-            product = Product.objects.get(id=product_id)
-            OrderItem.objects.create(order=order, product=product, quantity=item['quantity'], price=Decimal(str(item['price'])))
+        order = Order.objects.create(
+            user=request.user,
+            phone=request.POST.get('phone'),
+            city=request.POST.get('city'),
+            address=request.POST.get('address'),
+            total_price=total_price,
+            is_completed=True
+        )
+        for item in cart_items:
+            OrderItem.objects.create(
+                order=order,
+                product=item['product'],
+                quantity=item['quantity'],
+                price=item['product'].price
+            )
         request.session['cart'] = {}
+        request.session.modified = True
+        messages.success(request, 'Siparişiniz başarıyla oluşturuldu!')
         return redirect('orders')
-    return render(request, 'checkout.html', {'profile': user_profile, 'total_price': total_price})
+    return render(request, 'checkout.html', {'profile': user_profile, 'total_price': total_price, 'cart_items': cart_items})
 
 @login_required
 def profile_view(request):
