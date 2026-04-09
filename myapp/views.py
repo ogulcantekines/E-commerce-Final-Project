@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.core.paginator import Paginator
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -29,8 +30,14 @@ def category_list(request, category_slug):
 
     min_fiyat = request.GET.get('min_fiyat')
     max_fiyat = request.GET.get('max_fiyat')
-    if min_fiyat: products = products.filter(price__gte=min_fiyat)
-    if max_fiyat: products = products.filter(price__lte=max_fiyat)
+    if min_fiyat:
+        products = products.filter(price__gte=min_fiyat)
+    if max_fiyat:
+        products = products.filter(price__lte=max_fiyat)
+
+    paginator = Paginator(products, 12)
+    page = request.GET.get('page')
+    products = paginator.get_page(page)
 
     return render(request, "list.html", {'categories': categories, 'products': products, 'category': category, 'available_brands': available_brands})
 
@@ -66,7 +73,8 @@ def user_account(request):
             user.first_name = ad_soyad
             user.save()
             login(request, user)
-            if temp_cart: request.session['cart'] = temp_cart
+            if temp_cart: 
+                request.session['cart'] = temp_cart
             return redirect('index')
 
         elif 'login_submit' in request.POST:
@@ -75,7 +83,8 @@ def user_account(request):
             user = authenticate(request, username=email, password=sifre)
             if user:
                 login(request, user)
-                if temp_cart: request.session['cart'] = temp_cart
+                if temp_cart: 
+                    request.session['cart'] = temp_cart
                 return redirect('index')
             messages.error(request, "Hatalı email veya şifre!")
     return render(request, "login.html", {'categories': categories})
@@ -95,7 +104,8 @@ def cart(request):
             item_total = product.price * qty
             total_price += item_total
             cart_items.append({'product': product, 'quantity': qty, 'item_total': item_total})
-        except Product.DoesNotExist: continue
+        except Product.DoesNotExist:
+            continue
     return render(request, 'cart.html', {'cart_items': cart_items, 'total_price': total_price, 'categories': categories})
 
 def add_to_cart(request, product_id):
@@ -112,8 +122,10 @@ def remove_from_cart(request, product_id):
     p_id = str(product_id)
     cart_session = request.session.get('cart', {})
     if p_id in cart_session:
-        if cart_session[p_id] > 1: cart_session[p_id] -= 1
-        else: del cart_session[p_id]
+        if cart_session[p_id] > 1: 
+            cart_session[p_id] -= 1
+        else: 
+            del cart_session[p_id]
     request.session['cart'] = cart_session
     request.session.modified = True
     return redirect('cart')
@@ -121,7 +133,8 @@ def remove_from_cart(request, product_id):
 def delete_cart_item(request, product_id):
     p_id = str(product_id)
     cart_session = request.session.get('cart', {})
-    if p_id in cart_session: del cart_session[p_id]
+    if p_id in cart_session:
+        del cart_session[p_id]
     request.session['cart'] = cart_session
     request.session.modified = True
     return redirect('cart')
@@ -132,6 +145,21 @@ def search(request):
     categories = Category.objects.all()
     products = Product.objects.filter(Q(name__icontains=query) | Q(brand__icontains=query)) if query else Product.objects.none()
     available_brands = products.values_list('brand', flat=True).distinct() if query else []
+
+    secilen_markalar = request.GET.getlist('marka')
+    if secilen_markalar:
+        products = products.filter(brand__in=secilen_markalar)
+    min_fiyat = request.GET.get('min_fiyat')
+    max_fiyat = request.GET.get('max_fiyat')
+    if min_fiyat:
+        products = products.filter(price__gte=min_fiyat)
+    if max_fiyat:
+        products = products.filter(price__lte=max_fiyat)
+
+    paginator = Paginator(products, 12)
+    page = request.GET.get('page')
+    products = paginator.get_page(page)
+
     return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories, 'available_brands': available_brands})
 
 # --- ÖDEME VE PROFİL ---
@@ -139,7 +167,8 @@ def search(request):
 def checkout_view(request):
     user_profile, created = UserProfile.objects.get_or_create(user=request.user)
     cart = request.session.get('cart', {})
-    if not cart: return redirect('index')
+    if not cart: 
+        return redirect('index')
     
     # Toplam fiyatı hesapla (session'da {product_id: quantity} formatında)
     cart_items = []
