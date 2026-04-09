@@ -91,6 +91,20 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity} x {self.product.name}"
 
+# 7. ÜRÜN YORUM MODELİ
+class Review(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='reviews', verbose_name="Ürün")
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Kullanıcı")
+    rating = models.PositiveSmallIntegerField(verbose_name="Puan")  # 1-5
+    comment = models.TextField(verbose_name="Yorum")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Tarih")
+
+    class Meta:
+        unique_together = ('product', 'user')  # Bir kullanıcı bir ürüne bir kere yorum yapabilir
+
+    def __str__(self):
+        return f"{self.user.username} - {self.product.name} ({self.rating}/5)"
+
 # --- OTOMATİK PROFİL SİNYALLERİ ---
 
 @receiver(post_save, sender=User)

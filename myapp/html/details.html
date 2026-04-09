@@ -57,4 +57,79 @@
         </div>
     </div>
 </main>
+
+<div class="container mb-5">
+    <div class="row g-4">
+        <!-- Yorum Formu -->
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
+                {% if avg_rating %}
+                <div class="text-center mb-3">
+                    <span class="display-6 fw-bold text-warning">{{ avg_rating }}</span>
+                    <span class="text-muted">/5</span>
+                    <div class="text-muted small">{{ reviews.count }} yorum</div>
+                </div>
+                <hr>
+                {% endif %}
+                {% if user.is_authenticated %}
+                    <h5 class="fw-bold mb-3">{% if user_review %}Yorumunuzu Düzenleyin{% else %}Yorum Yapın{% endif %}</h5>
+                    <form method="POST" action="{% url 'add_review' product.slug %}">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Puanınız</label>
+                            <select name="rating" class="form-select rounded-pill">
+                                {% for i in "54321" %}
+                                <option value="{{ i }}" {% if user_review.rating == i|add:0 %}selected{% endif %}>
+                                    {{ i }} Yıldız
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Yorumunuz</label>
+                            <textarea name="comment" class="form-control rounded-4" rows="3" placeholder="Bu ürün hakkında ne düşünüyorsunuz?">{{ user_review.comment|default:'' }}</textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold">
+                            {% if user_review %}Güncelle{% else %}Gönder{% endif %}
+                        </button>
+                    </form>
+                {% else %}
+                    <div class="text-center py-3">
+                        <p class="text-muted">Yorum yapmak için giriş yapmalısınız.</p>
+                        <a href="{% url 'user_account' %}" class="btn btn-outline-primary rounded-pill px-4">Giriş Yap</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Yorumlar Listesi -->
+        <div class="col-md-8">
+            <h5 class="fw-bold mb-3">Yorumlar</h5>
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="card border-0 shadow-sm p-3 mb-3" style="border-radius: 15px;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <div class="fw-bold">{{ review.user.first_name|default:review.user.username }}</div>
+                        <div>
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= review.rating %}
+                                    <i class="fa-solid fa-star text-warning small"></i>
+                                {% else %}
+                                    <i class="fa-regular fa-star text-warning small"></i>
+                                {% endif %}
+                            {% endfor %}
+                            <span class="text-muted small ms-1">{{ review.created_at|date:"d F Y" }}</span>
+                        </div>
+                    </div>
+                    <p class="text-secondary mb-0 small">{{ review.comment }}</p>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="card border-0 shadow-sm p-4 text-center" style="border-radius: 15px;">
+                    <p class="text-muted mb-0">Henüz yorum yapılmamış. İlk yorumu sen yap!</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock content %}

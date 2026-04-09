@@ -31,4 +31,5 @@ urlpatterns = [
     path('reset/done/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
     path('profilim/', views.profile_view, name='profile'),
+    path('urun/<slug:product_slug>/yorum/', views.add_review, name='add_review'),
 ]

@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
 from decimal import Decimal
-from .models import Category, Product, Slider, Order, OrderItem, UserProfile
+from .models import Category, Product, Slider, Order, OrderItem, UserProfile, Review
 
 # --- ANA SAYFA ---
 def index(request):
@@ -37,7 +37,16 @@ def category_list(request, category_slug):
 def product_detail(request, product_slug):
     categories = Category.objects.all()
     product = get_object_or_404(Product, slug=product_slug)
-    return render(request, "details.html", {'categories': categories, 'product': product})
+    reviews = product.reviews.select_related('user').order_by('-created_at')
+    user_review = reviews.filter(user=request.user).first() if request.user.is_authenticated else None
+    avg_rating = round(sum(r.rating for r in reviews) / reviews.count(), 1) if reviews.count() > 0 else None
+    return render(request, "details.html", {
+        'categories': categories,
+        'product': product,
+        'reviews': reviews,
+        'user_review': user_review,
+        'avg_rating': avg_rating,
+    })
 
 # --- KULLANICI HESABI VE GİRİŞ/ÇIKIŞ ---
 def user_account(request):
@@ -180,6 +189,23 @@ def orders(request):
     categories = Category.objects.all()
     user_orders = Order.objects.filter(user=request.user, is_completed=True).order_by('-created_at')
     return render(request, 'orders.html', {'categories': categories, 'orders': user_orders})
+
+@login_required
+def add_review(request, product_slug):
+    product = get_object_or_404(Product, slug=product_slug)
+    if request.method == 'POST':
+        rating = int(request.POST.get('rating', 5))
+        comment = request.POST.get('comment', '').strip()
+        if comment and 1 <= rating <= 5:
+            Review.objects.update_or_create(
+                product=product,
+                user=request.user,
+                defaults={'rating': rating, 'comment': comment}
+            )
+            messages.success(request, 'Yorumunuz kaydedildi!')
+        else:
+            messages.error(request, 'Lütfen yorum ve puan giriniz.')
+    return redirect('product_detail', product_slug=product_slug)
 
 @login_required
 def order_detail(request, order_id):

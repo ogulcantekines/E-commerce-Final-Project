@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Slider, Order, OrderItem
+from .models import Category, Product, Slider, Order, OrderItem, Review
 from django.db.models import Sum
 
 # 1. Başlıkları Özelleştir
@@ -39,3 +39,9 @@ class ProductAdmin(admin.ModelAdmin):
 # 5. Diğer Modeller (Bunları bir kez kaydetmek yeterli)
 admin.site.register(Category)
 admin.site.register(Slider)
+
+@admin.register(Review)
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user', 'rating', 'created_at')
+    list_filter = ('rating',)
+    search_fields = ('product__name', 'user__username')
