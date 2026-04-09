@@ -210,6 +210,7 @@ def profile_view(request):
     if request.method == 'POST':
         user_profile.phone, user_profile.city, user_profile.address = request.POST.get('phone'), request.POST.get('city'), request.POST.get('address')
         user_profile.save()
+        messages.success(request, 'Profil bilgileriniz güncellendi!')
         return redirect('profile')
     return render(request, 'profile.html', {'profile': user_profile})
 
