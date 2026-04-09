@@ -34,14 +34,33 @@
         </div>
 
         <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 text-center bg-light" style="border-radius: 20px;">
+            <div class="card border-0 shadow-sm p-4 bg-light" style="border-radius: 20px;">
                 <h4 class="fw-bold mb-3">Sipariş Özeti</h4>
                 <hr>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-secondary">Genel Toplam:</span>
-                    <h3 class="text-primary fw-bold mb-0">{{ total_price }} TL</h3>
+                {% for item in cart_items %}
+                <div class="d-flex align-items-center mb-3 gap-3">
+                    {% if item.product.image %}
+                        <img src="{{ item.product.image.url }}" class="rounded" style="width:50px;height:50px;object-fit:cover;" alt="{{ item.product.name }}">
+                    {% else %}
+                        <img src="{% static 'images/default.jpg' %}" class="rounded" style="width:50px;height:50px;object-fit:cover;" alt="Resim Yok">
+                    {% endif %}
+                    <div class="flex-grow-1">
+                        <div class="fw-bold small">{{ item.product.name }}</div>
+                        <div class="text-muted small">{{ item.quantity }} adet</div>
+                    </div>
+                    <div class="fw-bold small text-primary">{{ item.item_total }} TL</div>
                 </div>
-                <p class="small text-muted">Ödeme işlemi kapıda nakit veya kart ile yapılacaktır.</p>
+                {% endfor %}
+                <hr>
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="text-secondary">Kargo</span>
+                    <span class="text-success fw-bold small">Ücretsiz</span>
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <span class="fw-bold">Genel Toplam:</span>
+                    <h5 class="text-primary fw-bold mb-0">{{ total_price }} TL</h5>
+                </div>
+                <p class="small text-muted text-center">Ödeme işlemi kapıda nakit veya kart ile yapılacaktır.</p>
             </div>
         </div>
     </div>
