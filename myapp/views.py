@@ -182,6 +182,11 @@ def orders(request):
     return render(request, 'orders.html', {'categories': categories, 'orders': user_orders})
 
 @login_required
+def order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id, user=request.user)
+    return render(request, 'order_detail.html', {'order': order})
+
+@login_required
 def change_password(request):
     if request.method == 'POST':
         form = PasswordChangeForm(request.user, request.POST)

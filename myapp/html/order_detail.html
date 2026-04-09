@@ -1,0 +1,105 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Sipariş #{{ order.id }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="card shadow-sm border-0 p-4" style="border-radius: 20px;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="fw-bold mb-0">Sipariş #{{ order.id }}</h2>
+            <a href="{% url 'orders' %}" class="btn btn-outline-secondary rounded-pill px-4">
+                <i class="fa-solid fa-arrow-left me-2"></i>Geri Dön
+            </a>
+        </div>
+
+        <div class="row g-3 mb-4">
+            <div class="col-md-3">
+                <div class="bg-light rounded-3 p-3 text-center">
+                    <div class="text-muted small">Sipariş Tarihi</div>
+                    <div class="fw-bold">{{ order.created_at|date:"d F Y" }}</div>
+                    <div class="text-muted small">{{ order.created_at|date:"H:i" }}</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="bg-light rounded-3 p-3 text-center">
+                    <div class="text-muted small">Toplam Tutar</div>
+                    <div class="fw-bold text-primary">{{ order.total_price }} TL</div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="bg-light rounded-3 p-3 text-center">
+                    <div class="text-muted small">Durum</div>
+                    <span class="badge bg-info text-dark rounded-pill px-3">Hazırlanıyor</span>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="bg-light rounded-3 p-3 text-center">
+                    <div class="text-muted small">Kargo</div>
+                    <div class="fw-bold text-success">Ücretsiz</div>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="fw-bold mb-3">Ürünler</h5>
+        <div class="table-responsive mb-4">
+            <table class="table align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Ürün</th>
+                        <th>Birim Fiyat</th>
+                        <th>Adet</th>
+                        <th class="text-end">Toplam</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for item in order.items.all %}
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-3">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" class="rounded" style="width:50px;height:50px;object-fit:cover;">
+                                {% else %}
+                                    <img src="{% static 'images/default.jpg' %}" class="rounded" style="width:50px;height:50px;object-fit:cover;">
+                                {% endif %}
+                                <div>
+                                    <div class="fw-bold">{{ item.product.name }}</div>
+                                    <div class="text-muted small">{{ item.product.brand }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>{{ item.price }} TL</td>
+                        <td>{{ item.quantity }}</td>
+                        <td class="text-end fw-bold text-primary">{{ item.price|floatformat:2 }} TL</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="3" class="text-end fw-bold">Genel Toplam:</td>
+                        <td class="text-end fw-bold text-primary fs-5">{{ order.total_price }} TL</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+
+        <h5 class="fw-bold mb-3">Teslimat Bilgileri</h5>
+        <div class="bg-light rounded-3 p-3">
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="text-muted small">Telefon</div>
+                    <div class="fw-bold">{{ order.phone|default:"-" }}</div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-muted small">Şehir</div>
+                    <div class="fw-bold">{{ order.city|default:"-" }}</div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-muted small">Adres</div>
+                    <div class="fw-bold">{{ order.address|default:"-" }}</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

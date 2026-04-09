@@ -13,6 +13,7 @@
                             <th>Tarih</th>
                             <th>Toplam Tutar</th>
                             <th>Durum</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -22,6 +23,7 @@
                             <td>{{ order.created_at|date:"d F Y H:i" }}</td>
                             <td class="text-primary fw-bold">{{ order.total_price }} TL</td>
                             <td><span class="badge rounded-pill bg-info text-dark">Hazırlanıyor</span></td>
+                            <td><a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary rounded-pill px-3">Detay</a></td>
                         </tr>
                         {% endfor %}
                     </tbody>
