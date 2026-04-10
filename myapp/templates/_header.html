@@ -6,19 +6,20 @@
         <img src="{% static 'images/logo.avif' %}" class="h-10 w-auto rounded-md shadow-sm" alt="OnlineShop Logo" />
         <span class="text-xl font-extrabold tracking-tight text-slate-900 font-display m-0">Online<span class="text-primary">Shop</span></span>
     </a>
-    
-    <!-- Perfectly Centered Navigation Links -->
+
+    <!-- Perfectly Centered Navigation Links (Desktop) -->
     <div class="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
         <a class="text-[13px] font-bold tracking-widest uppercase font-manrope text-decoration-none transition-all hover:text-primary {% if request.path == '/' %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-500 hover:opacity-80{% endif %}" href="{% url 'index' %}">Ana Sayfa</a>
         {% for cat in categories %}
-            <a class="text-[13px] font-bold tracking-widest uppercase font-manrope text-decoration-none transition-all hover:text-primary {% if request.path == cat.get_absolute_url %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-500 hover:opacity-80{% endif %}" href="{% url 'category_list' cat.slug %}">
+            <a class="text-[13px] font-bold tracking-widest uppercase font-manrope text-decoration-none transition-all hover:text-primary text-slate-500 hover:opacity-80" href="{% url 'category_list' cat.slug %}">
                 {{ cat.name }}
             </a>
         {% endfor %}
     </div>
-    
+
     <!-- Trailing Actions (Right) -->
     <div class="flex items-center gap-1">
+        <!-- Desktop Search -->
         <div class="hidden xl:relative xl:flex items-center mr-1">
             <form action="{% url 'search' %}" method="GET" class="m-0 p-0">
                 <input name="q" value="{{ request.GET.q|default:'' }}" class="w-32 bg-slate-100/50 border border-slate-200 rounded-full py-2 pl-9 pr-4 focus:ring-2 focus:ring-primary/20 focus:w-48 text-xs transition-all duration-300" placeholder="Ara..." type="text"/>
@@ -27,7 +28,7 @@
         </div>
 
         <!-- Account -->
-        <div class="relative group">
+        <div class="relative group hidden md:block">
             <button data-account-toggle class="flex items-center gap-2 h-10 px-3 text-slate-500 hover:text-primary hover:bg-slate-50 rounded-full active:scale-95 duration-300 ease-out transition-all border-0 bg-transparent hover:scale-105 cursor-pointer">
                 <span class="material-icons-round text-2xl pointer-events-none">person_outline</span>
                 {% if user.is_authenticated %}
@@ -36,7 +37,7 @@
                     </span>
                 {% endif %}
             </button>
-            <div data-account-dropdown class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden transform origin-top-right scale-95 group-hover:scale-100">
+            <div data-account-dropdown class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-slate-100 opacity-0 invisible transition-all duration-300 z-50 overflow-hidden transform origin-top-right scale-95">
                 <div class="p-2">
                     {% if user.is_authenticated %}
                         <div class="px-4 py-3 bg-slate-50 rounded-xl mb-1">
@@ -55,7 +56,7 @@
             </div>
         </div>
 
-        <!-- Enhanced Cart Button -->
+        <!-- Cart -->
         <a href="{% url 'cart' %}" class="flex items-center gap-2 pl-3 pr-4 py-2 bg-primary text-white rounded-full hover:bg-blue-600 hover:scale-105 active:scale-95 duration-300 ease-out transition-all text-decoration-none shadow-lg hover:shadow-primary/40 shadow-primary/20 relative ml-1">
             <div class="relative">
                 <span class="material-icons-round text-xl">shopping_cart</span>
@@ -63,14 +64,60 @@
                 <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] flex items-center justify-center h-4 w-4 rounded-full font-bold border-2 border-primary" style="line-height:0;">{{ cart_total_quantity }}</span>
                 {% endif %}
             </div>
-            <span class="text-xs font-bold uppercase tracking-wider">Sepetim</span>
+            <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Sepetim</span>
         </a>
+
+        <!-- Hamburger (Mobile) -->
+        <button id="hamburger-btn" class="md:hidden flex items-center justify-center h-10 w-10 rounded-full hover:bg-slate-100 transition-colors border-0 bg-transparent cursor-pointer ml-1">
+            <span class="material-icons-round text-slate-700">menu</span>
+        </button>
     </div>
+</div>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="md:hidden hidden border-t border-slate-100 bg-white/95 backdrop-blur-xl">
+    <!-- Mobile Search -->
+    <div class="px-6 py-4 border-b border-slate-50">
+        <form action="{% url 'search' %}" method="GET" class="m-0 relative">
+            <input name="q" value="{{ request.GET.q|default:'' }}" class="w-full bg-slate-100 border-0 rounded-full py-2.5 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 outline-none" placeholder="Ürün ara..." type="text"/>
+            <span class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+        </form>
+    </div>
+
+    <!-- Mobile Nav Links -->
+    <div class="px-4 py-3 space-y-1">
+        <a href="{% url 'index' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-primary text-decoration-none transition-colors">
+            <span class="material-icons-round text-lg text-slate-400">home</span> Ana Sayfa
+        </a>
+        {% for cat in categories %}
+        <a href="{% url 'category_list' cat.slug %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-primary text-decoration-none transition-colors">
+            <span class="material-icons-round text-lg text-slate-400">category</span> {{ cat.name }}
+        </a>
+        {% endfor %}
+
+        <div class="h-px bg-slate-100 my-2"></div>
+
+        {% if user.is_authenticated %}
+            <a href="{% url 'profile' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-primary text-decoration-none transition-colors">
+                <span class="material-icons-round text-lg text-slate-400">person</span> Profil
+            </a>
+            <a href="{% url 'orders' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-primary text-decoration-none transition-colors">
+                <span class="material-icons-round text-lg text-slate-400">receipt_long</span> Siparişlerim
+            </a>
+            <a href="{% url 'logout' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-red-500 hover:bg-red-50 text-decoration-none transition-colors">
+                <span class="material-icons-round text-lg">logout</span> Çıkış Yap
+            </a>
+        {% else %}
+            <a href="{% url 'user_account' %}" class="flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold text-slate-700 hover:bg-slate-50 hover:text-primary text-decoration-none transition-colors">
+                <span class="material-icons-round text-lg text-slate-400">login</span> Giriş Yap / Üye Ol
+            </a>
+        {% endif %}
+    </div>
+    <div class="px-6 pb-4"></div>
 </div>
 </nav>
 
 <style>
-    /* JS Toggle Classes */
     [data-account-dropdown].is-active {
         opacity: 1 !important;
         visibility: visible !important;
@@ -80,21 +127,30 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Account dropdown
     const toggle = document.querySelector('[data-account-toggle]');
     const dropdown = document.querySelector('[data-account-dropdown]');
-
     if (toggle && dropdown) {
         toggle.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
             dropdown.classList.toggle('is-active');
         });
-
-        // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.classList.remove('is-active');
             }
+        });
+    }
+
+    // Hamburger menu
+    const hamburger = document.getElementById('hamburger-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (hamburger && mobileMenu) {
+        hamburger.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+            const icon = hamburger.querySelector('.material-icons-round');
+            icon.textContent = mobileMenu.classList.contains('hidden') ? 'menu' : 'close';
         });
     }
 });
