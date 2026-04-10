@@ -4,129 +4,185 @@
 {% block title %}
     {% if query %}Arama: {{ query }}
     {% elif category %}{{ category.name }}
-    {% else %}Ürünler{% endif %}
+    {% else %}Ürünler{% endif %} | OnlineShop
 {% endblock %}
 
 {% block content %}
-    <main class="container mb-3">
-      <h5 class="my-4">
-          {% if query %} "{{ query }}" İçin Sonuçlar
-          {% elif category %} {{ category.name }}
-          {% else %} Tüm Ürünler {% endif %}
-      </h5>
-      <div class="row g-4">
-        <aside class="col-lg-3 col-md-4">
-          <form action="" method="GET" class="border p-3 rounded bg-white shadow-sm">
-            
-            <h5 class="fw-bold mb-3">Markalar</h5>
-            
-             <div class="mb-4">
-  {% for brand_name in available_brands %}
-    {% if brand_name %} <div class="form-check mb-2">
-      <input class="form-check-input" type="checkbox" name="marka" value="{{ brand_name }}" id="brand_{{ forloop.counter }}" 
-             {% if brand_name in request.GET.getlist %}checked{% endif %}>
-      <label class="form-check-label" for="brand_{{ forloop.counter }}">
-        {{ brand_name|upper }}
-      </label>
-    </div>
-    {% endif %}
-  {% empty %}
-    <p class="text-muted small">Bu kategoride marka bulunamadı.</p>
-  {% endfor %}
-</div>
-
-            <hr />
-
-            <h5 class="fw-bold mb-3 mt-4">Fiyat Aralığı</h5>
-            <div class="mb-4">
-              <div class="d-flex gap-2 mb-3">
-                <input type="number" name="min_fiyat" class="form-control" placeholder="Min TL" value="{{ request.GET.min_fiyat }}">
-                <input type="number" name="max_fiyat" class="form-control" placeholder="Max TL" value="{{ request.GET.max_fiyat }}">
-              </div>
-            </div>
-
-            <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold">Filtrele</button>
-            {% if category %}
-    {# Eğer bir kategori sayfasındaysak (Normal liste) #}
-    <a href="{% url 'category_list' category.slug %}" class="btn btn-link w-100 mt-2 text-decoration-none text-muted small">Filtreleri Temizle</a>
-{% elif query %}
-    {# Eğer arama sonuçları sayfasındaysak #}
-    <a href="{% url 'search' %}?q={{ query }}" class="btn btn-link w-100 mt-2 text-decoration-none text-muted small">Aramayı Temizle</a>
-{% else %}
-    {# Diğer tüm durumlar için ana listeye dön #}
-    <a href="{% url 'index' %}" class="btn btn-link w-100 mt-2 text-decoration-none text-muted small">Filtreleri Temizle</a>
-{% endif %}
-          </form>
-        </aside>
-
-        <section class="col-lg-9 col-md-8">
-    <div class="row g-4">
-        {% for product in products %}
-        <div class="col-lg-4 col-md-6 col-sm-12">
-            <div class="card h-100 border-0 shadow-sm p-3" style="border-radius: 15px;">
-                <div class="text-center mb-3">
-                    {% if product.image %}
-                        <img src="{{ product.image.url }}" class="img-fluid" style="height: 180px; object-fit: contain;" alt="{{ product.name }}">
+<main class="pt-[70px] bg-[#fdfdfd] min-h-screen">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row items-baseline justify-between mb-12 gap-4">
+            <div>
+                <nav class="flex mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400" aria-label="Breadcrumb">
+                    <a href="{% url 'index' %}" class="hover:text-primary transition-colors text-decoration-none mr-2">OnlineShop</a>
+                    <span class="mr-2">/</span>
+                    {% if category %}
+                        <span class="text-primary">{{ category.name }}</span>
                     {% else %}
-                        <img src="{% static 'images/default.jpg' %}" class="img-fluid" style="height: 180px;" alt="Resim Yok">
+                        <span class="text-primary">Tüm Ürünler</span>
                     {% endif %}
-                </div>
-                
-                <div class="card-body px-0 d-flex flex-column">
-                    <p class="card-text fw-semibold mb-2" style="font-size: 0.9rem; height: 3rem; overflow: hidden;">
-                        {{ product.name }}
-                    </p>
-                    <div class="mt-auto mb-3">
-                        <span class="text-primary fw-bold fs-4">{{ product.price }}</span>
-                        <span class="text-primary fw-bold fs-6">TL</span>
-                    </div>
-                    
-                    <div class="d-flex gap-2 mt-auto">
-                        <a href="{% url 'product_detail' product.slug %}" class="btn btn-outline-primary rounded-pill flex-grow-1 fw-bold">
-                            İncele
-                        </a>
-                        <a href="{% url 'add_to_cart' product.id %}" class="btn btn-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 42px; height: 42px;">
-                            <i class="fa-solid fa-cart-shopping"></i>
-                        </a>
-                    </div>
-                </div>
+                </nav>
+                <h1 class="text-4xl font-display font-black tracking-tighter text-slate-900 m-0">
+                    {% if query %} <span class="text-slate-400">"{{ query }}"</span> Sonuçları
+                    {% elif category %} {{ category.name }}
+                    {% else %} Keşfet {% endif %}
+                </h1>
+            </div>
+            <div class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">
+                {% if products %} {{ products.paginator.count }} Ürün Listeleniyor {% endif %}
             </div>
         </div>
-        {% empty %}
-        <div class="col-12 text-center my-5">
-            <i class="fa-solid fa-magnifying-glass text-muted mb-3" style="font-size: 3rem;"></i>
-            <h3 class="text-muted">Bu kriterlere uygun ürün bulunamadı.</h3>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            
+            <!-- Filter Sidebar -->
+            <aside class="lg:col-span-3 lg:sticky lg:top-[110px]">
+                <form action="" method="GET" class="bg-white p-8 rounded-[2rem] border border-slate-100 shadow-xl shadow-slate-100/20 m-0">
+                    
+                    <!-- Search Hidden Carry -->
+                    {% if query %}<input type="hidden" name="q" value="{{ query }}">{% endif %}
+
+                    <!-- Brands Section -->
+                    <div class="mb-10">
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="material-icons-round text-primary text-xl">verified</span>
+                            <h5 class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-900 m-0">Markalar</h5>
+                        </div>
+                        
+                        <div class="space-y-3 max-h-64 overflow-y-auto pr-2 custom-scrollbar">
+                            {% for brand_name in available_brands %}
+                                {% if brand_name %}
+                                <label class="flex items-center group cursor-pointer">
+                                    <div class="relative flex items-center">
+                                        <input type="checkbox" name="marka" value="{{ brand_name }}" 
+                                               class="peer h-5 w-5 cursor-pointer appearance-none rounded-md border border-slate-200 transition-all checked:bg-primary checked:border-primary"
+                                               {% if brand_name in request.GET.getlist %}checked{% endif %}>
+                                        <span class="material-icons-round absolute text-white text-xs opacity-0 peer-checked:opacity-100 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-opacity">check</span>
+                                    </div>
+                                    <span class="ml-3 text-sm font-bold text-slate-500 group-hover:text-slate-900 transition-colors">{{ brand_name|upper }}</span>
+                                </label>
+                                {% endif %}
+                            {% empty %}
+                                <p class="text-slate-400 text-xs italic">Marka bulunamadı.</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="h-px bg-slate-50 mb-10"></div>
+
+                    <!-- Price Section -->
+                    <div class="mb-10">
+                        <div class="flex items-center gap-2 mb-6">
+                            <span class="material-icons-round text-primary text-xl">payments</span>
+                            <h5 class="text-[11px] font-black uppercase tracking-[0.2em] text-slate-900 m-0">Fiyat Aralığı</h5>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div class="relative">
+                                <input type="number" name="min_fiyat" class="w-full bg-slate-50 border-transparent rounded-xl py-3 px-4 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none" placeholder="Min" value="{{ request.GET.min_fiyat }}">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-bold text-slate-300">TL</span>
+                            </div>
+                            <div class="relative">
+                                <input type="number" name="max_fiyat" class="w-full bg-slate-50 border-transparent rounded-xl py-3 px-4 text-xs font-bold focus:ring-2 focus:ring-primary/20 focus:bg-white transition-all outline-none" placeholder="Max" value="{{ request.GET.max_fiyat }}">
+                                <span class="absolute right-3 top-1/2 -translate-y-1/2 text-[9px] font-bold text-slate-300">TL</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3.5 rounded-2xl transition-all shadow-xl shadow-primary/20 text-[11px] uppercase tracking-[0.2em] active:scale-[0.98] border-0 cursor-pointer">
+                        Filtreleri Uygula
+                    </button>
+                    
+                    {% if category %}
+                        <a href="{% url 'category_list' category.slug %}" class="block text-center mt-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors text-decoration-none">Temizle</a>
+                    {% elif query %}
+                        <a href="{% url 'search' %}?q={{ query }}" class="block text-center mt-6 text-[9px] font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-colors text-decoration-none">Temizle</a>
+                    {% endif %}
+                </form>
+            </aside>
+
+            <!-- Product Grid Section -->
+            <section class="lg:col-span-9">
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {% for product in products %}
+                    <div class="group bg-white rounded-[2.5rem] p-6 shadow-xl shadow-slate-100/30 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 relative overflow-hidden h-full flex flex-col">
+                        <div class="relative aspect-square mb-6 overflow-hidden rounded-3xl bg-slate-50/50">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="w-full h-full object-contain p-8 transition-transform duration-700 group-hover:scale-110" alt="{{ product.name }}">
+                            {% else %}
+                                <div class="w-full h-full flex items-center justify-center text-slate-200">
+                                    <span class="material-icons-round text-6xl">image_not_supported</span>
+                                </div>
+                            {% endif %}
+                            <a href="{% url 'product_detail' product.slug %}" class="absolute inset-0 z-10"></a>
+                        </div>
+                        
+                        <div class="flex-grow flex flex-col">
+                            <h3 class="text-sm font-bold text-slate-900 mb-2 line-clamp-2 h-10 group-hover:text-primary transition-colors">{{ product.name }}</h3>
+                            
+                            <div class="flex items-baseline gap-1 mt-auto">
+                                <span class="text-2xl font-display font-black text-slate-900">{{ product.price }}</span>
+                                <span class="text-xs font-bold text-primary">TL</span>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 flex items-center gap-3">
+                            <a href="{% url 'product_detail' product.slug %}" class="flex-grow text-center py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl text-[10px] uppercase tracking-widest transition-all text-decoration-none active:scale-[0.98]">
+                                İncele
+                            </a>
+                            <a href="{% url 'add_to_cart' product.id %}" class="w-12 h-12 bg-primary hover:bg-blue-600 text-white flex items-center justify-center rounded-2xl transition-all shadow-lg shadow-primary/20 active:scale-[0.95] text-decoration-none">
+                                <span class="material-icons-round text-xl">shopping_cart</span>
+                            </a>
+                        </div>
+                    </div>
+                    {% empty %}
+                    <div class="col-span-full py-24 text-center">
+                        <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                            <span class="material-icons-round text-4xl">search_off</span>
+                        </div>
+                        <h3 class="text-xl font-black text-slate-900 mb-2">Ürün Bulunamadı</h3>
+                        <p class="text-slate-400 text-sm">Arama kriterlerinize uygun sonuç bulamadık.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if products.has_other_pages %}
+                <div class="mt-16 flex justify-center">
+                    <nav class="flex items-center gap-2 p-2 bg-white rounded-3xl shadow-xl shadow-slate-100 border border-slate-100">
+                        {% if products.has_previous %}
+                        <a href="?{{ query_string }}&page={{ products.previous_page_number }}" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 rounded-2xl transition-all text-decoration-none">
+                            <span class="material-icons-round">chevron_left</span>
+                        </a>
+                        {% endif %}
+
+                        <div class="flex items-center px-2 gap-1">
+                        {% for num in products.paginator.page_range %}
+                            {% if products.number == num %}
+                                <span class="w-10 h-10 flex items-center justify-center bg-primary text-white font-bold rounded-2xl text-xs">{{ num }}</span>
+                            {% elif num > products.number|add:'-3' and num < products.number|add:'3' %}
+                                <a href="?{{ query_string }}&page={{ num }}" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 rounded-2xl transition-all text-xs text-decoration-none font-bold">{{ num }}</a>
+                            {% endif %}
+                        {% endfor %}
+                        </div>
+
+                        {% if products.has_next %}
+                        <a href="?{{ query_string }}&page={{ products.next_page_number }}" class="w-10 h-10 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-slate-50 rounded-2xl transition-all text-decoration-none">
+                            <span class="material-icons-round">chevron_right</span>
+                        </a>
+                        {% endif %}
+                    </nav>
+                </div>
+                {% endif %}
+            </section>
         </div>
-        {% endfor %}
     </div>
+</main>
 
-    {% if products.has_other_pages %}
-    <nav class="mt-4 d-flex justify-content-center">
-        <ul class="pagination">
-            {% if products.has_previous %}
-                <li class="page-item">
-                    <a class="page-link rounded-pill me-1" href="?{% if query %}q={{ query }}&{% endif %}page={{ products.previous_page_number }}">
-                        <i class="fa-solid fa-chevron-left"></i>
-                    </a>
-                </li>
-            {% endif %}
-            {% for num in products.paginator.page_range %}
-                <li class="page-item {% if products.number == num %}active{% endif %}">
-                    <a class="page-link rounded-pill me-1" href="?{{ query_string }}&page={{ num }}">{{ num }}</a>
-                </li>
-            {% endfor %}
-            {% if products.has_next %}
-                <li class="page-item">
-                    <a class="page-link rounded-pill" href="?{{ query_string }}&page={{ products.next_page_number }}">
-                        <i class="fa-solid fa-chevron-right"></i>
-                    </a>
-                </li>
-            {% endif %}
-        </ul>
-    </nav>
-    {% endif %}
-
-</section>
-      </div>
-    </main>
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #f8fafc; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #cbd5e1; }
+</style>
 {% endblock content %}

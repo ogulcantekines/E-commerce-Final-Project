@@ -1,68 +1,140 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} Ödeme ve Onay {% endblock %}
+{% block title %} Güvenli Ödeme | OnlineShop {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row g-4">
-        <div class="col-md-8">
-            <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
-                <h3 class="fw-bold mb-4">Teslimat Bilgileri</h3>
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Telefon</label>
-                        <input type="text" name="phone" class="form-control rounded-pill px-4" 
-                               value="{{ profile.phone|default:'' }}" required placeholder="05xx xxx xx xx">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Şehir</label>
-                        <input type="text" name="city" class="form-control rounded-pill px-4" 
-                               value="{{ profile.city|default:'' }}" required placeholder="Örn: İstanbul">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label fw-bold">Açık Adres</label>
-                        <textarea name="address" class="form-control rounded-4 px-4 py-3" 
-                                  rows="3" required placeholder="Siparişinizin teslim edileceği tam adres...">{{ profile.address|default:'' }}</textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success w-100 rounded-pill py-2 fw-bold mt-3 shadow-sm">
-                        Siparişi Tamamla ve Öde
-                    </button>
-                </form>
+<main class="min-h-screen bg-[#fdfdfd] pt-12 pb-20 px-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Header -->
+        <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+            <div>
+                <nav class="flex mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400" aria-label="Breadcrumb">
+                    <a href="{% url 'index' %}" class="hover:text-primary transition-colors text-decoration-none mr-2">OnlineShop</a>
+                    <span class="mr-2">/</span>
+                    <a href="{% url 'cart' %}" class="hover:text-primary transition-colors text-decoration-none mr-2">Sepetim</a>
+                    <span class="mr-2">/</span>
+                    <span class="text-primary">Ödeme ve Onay</span>
+                </nav>
+                <h1 class="text-3xl font-display font-black tracking-tight text-slate-900 m-0">Ödeme ve Onay</h1>
+            </div>
+            <div class="flex items-center gap-4 text-green-500">
+                <span class="material-icons-round text-2xl">verified_user</span>
+                <span class="text-[10px] font-black uppercase tracking-widest leading-none">256-Bit SSL<br/>Güvenli Ödeme Alt Yapısı</span>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4 bg-light" style="border-radius: 20px;">
-                <h4 class="fw-bold mb-3">Sipariş Özeti</h4>
-                <hr>
-                {% for item in cart_items %}
-                <div class="d-flex align-items-center mb-3 gap-3">
-                    {% if item.product.image %}
-                        <img src="{{ item.product.image.url }}" class="rounded" style="width:50px;height:50px;object-fit:cover;" alt="{{ item.product.name }}">
-                    {% else %}
-                        <img src="{% static 'images/default.jpg' %}" class="rounded" style="width:50px;height:50px;object-fit:cover;" alt="Resim Yok">
-                    {% endif %}
-                    <div class="flex-grow-1">
-                        <div class="fw-bold small">{{ item.product.name }}</div>
-                        <div class="text-muted small">{{ item.quantity }} adet</div>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
+            
+            <!-- Delivery Form (Left) -->
+            <div class="lg:col-span-8">
+                <div class="bg-white rounded-[2.5rem] shadow-[0_32px_100px_-20px_rgba(0,0,0,0.08)] border border-slate-100/60 overflow-hidden">
+                    <div class="p-8 md:p-12 border-b border-slate-50 flex items-center gap-4">
+                        <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
+                            <span class="material-icons-round">local_shipping</span>
+                        </div>
+                        <h2 class="text-xl font-display font-black text-slate-900">Teslimat Bilgileri</h2>
                     </div>
-                    <div class="fw-bold small text-primary">{{ item.item_total }} TL</div>
+                    
+                    <div class="p-8 md:p-12">
+                        <form method="POST" class="space-y-8 m-0">
+                            {% csrf_token %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                <!-- Phone -->
+                                <div class="space-y-3">
+                                    <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Telefon</label>
+                                    <div class="relative group">
+                                        <span class="material-icons-round absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-lg">smartphone</span>
+                                        <input type="text" name="phone" value="{{ profile.phone|default:'' }}" required placeholder="05xx xxx xx xx"
+                                               class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all outline-none border hover:border-slate-200">
+                                    </div>
+                                </div>
+                                <!-- City -->
+                                <div class="space-y-3">
+                                    <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Şehir</label>
+                                    <div class="relative group">
+                                        <span class="material-icons-round absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-lg">location_city</span>
+                                        <input type="text" name="city" value="{{ profile.city|default:'' }}" required placeholder="Örn: İstanbul"
+                                               class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all outline-none border hover:border-slate-200">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Address -->
+                            <div class="space-y-3">
+                                <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Açık Adres</label>
+                                <div class="relative group">
+                                    <span class="material-icons-round absolute left-5 top-5 text-slate-300 group-focus-within:text-primary transition-colors text-lg">place</span>
+                                    <textarea name="address" rows="3" required placeholder="Siparişinizin teslim edileceği tam adres..."
+                                              class="w-full bg-slate-50/50 border-slate-100 rounded-3xl py-4 pl-14 pr-6 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all min-h-[120px] outline-none border hover:border-slate-200">{{ profile.address|default:'' }}</textarea>
+                                </div>
+                            </div>
+
+                            <div class="pt-6 border-t border-slate-50">
+                                <button type="submit" class="w-full md:w-auto px-16 bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-2xl transition-all shadow-xl shadow-primary/20 text-xs uppercase tracking-[0.2em] active:scale-[0.98] border-0 cursor-pointer">
+                                    Siparişi Tamamla ve Öde
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                {% endfor %}
-                <hr>
-                <div class="d-flex justify-content-between align-items-center mb-1">
-                    <span class="text-secondary">Kargo</span>
-                    <span class="text-success fw-bold small">Ücretsiz</span>
-                </div>
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="fw-bold">Genel Toplam:</span>
-                    <h5 class="text-primary fw-bold mb-0">{{ total_price }} TL</h5>
-                </div>
-                <p class="small text-muted text-center">Ödeme işlemi kapıda nakit veya kart ile yapılacaktır.</p>
             </div>
+
+            <!-- Summary (Right) -->
+            <aside class="lg:col-span-4 lg:sticky lg:top-[110px]">
+                <div class="bg-white rounded-[2.5rem] p-8 shadow-[0_32px_100px_-20px_rgba(0,0,0,0.08)] border border-slate-100/60">
+                    <h3 class="text-xl font-display font-black text-slate-900 mb-8 lowercase first-letter:uppercase">Sipariş Özeti</h3>
+                    
+                    <div class="space-y-6 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar">
+                        {% for item in cart_items %}
+                        <div class="flex items-center gap-4 group">
+                            <div class="w-16 h-16 bg-slate-50 rounded-2xl p-2 shrink-0 flex items-center justify-center overflow-hidden">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" alt="{{ item.product.name }}">
+                                {% else %}
+                                    <span class="material-icons-round text-slate-200">image_not_supported</span>
+                                {% endif %}
+                            </div>
+                            <div class="flex-grow min-w-0">
+                                <h4 class="text-xs font-bold text-slate-900 truncate group-hover:text-primary transition-colors">{{ item.product.name }}</h4>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">{{ item.quantity }} Adet</p>
+                            </div>
+                            <div class="text-right shrink-0">
+                                <span class="text-xs font-black text-slate-900">{{ item.item_total }}</span>
+                                <span class="text-[9px] font-bold text-primary">TL</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="h-px bg-slate-50 my-8"></div>
+
+                    <div class="space-y-4 mb-8">
+                        <div class="flex justify-between items-center">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Kargo</span>
+                            <span class="text-[10px] font-black text-green-500 uppercase">Ücretsiz</span>
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Toplam</p>
+                                <p class="text-3xl font-display font-black text-slate-900 m-0 leading-none">{{ total_price }}</p>
+                            </div>
+                            <span class="text-lg font-bold text-primary mb-1">TL</span>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-50 rounded-2xl p-4 text-center">
+                        <p class="text-[10px] font-bold text-slate-400 m-0 leading-relaxed italic">
+                            * Ödeme işlemi kapıda nakit veya kart ile güvenli bir şekilde gerçekleştirilecektir.
+                        </p>
+                    </div>
+                </div>
+            </aside>
         </div>
     </div>
-</div>
+</main>
+<style>
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #f1f5f9; border-radius: 10px; }
+</style>
 {% endblock content %}

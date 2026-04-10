@@ -1,36 +1,104 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %} Profil Ayarlarım | OnlineShop {% endblock %}
+
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card border-0 shadow-lg" style="border-radius: 20px;">
-                <div class="card-body p-5">
-                    <h2 class="fw-bold mb-4 text-center">Profil Bilgilerim</h2>
-                    <hr class="mb-4">
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Telefon Numarası</label>
-                            <input type="text" name="phone" class="form-control rounded-pill px-4" 
-                                   placeholder="05xx xxx xx xx" value="{{ profile.phone|default:'' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Şehir</label>
-                            <input type="text" name="city" class="form-control rounded-pill px-4" 
-                                   placeholder="Örn: İstanbul" value="{{ profile.city|default:'' }}">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Teslimat Adresi</label>
-                            <textarea name="address" class="form-control rounded-4 px-4 py-3" 
-                                      rows="3" placeholder="Siparişlerinizin gönderileceği açık adres...">{{ profile.address|default:'' }}</textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary w-100 rounded-pill py-2 fw-bold mt-3 shadow">
-                            Değişiklikleri Kaydet
-                        </button>
-                    </form>
+<main class="min-h-screen bg-[#fdfdfd] pt-8 pb-20 px-4">
+    <div class="max-w-3xl mx-auto">
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-8 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400" aria-label="Breadcrumb">
+            <a href="{% url 'index' %}" class="hover:text-primary transition-colors text-decoration-none mr-2">OnlineShop</a>
+            <span class="mr-2">/</span>
+            <span class="text-slate-900">Hesabım</span>
+            <span class="mx-2">/</span>
+            <span class="text-primary">Profil Ayarları</span>
+        </nav>
+
+        <div class="bg-white rounded-[2.5rem] shadow-[0_32px_100px_-20px_rgba(0,0,0,0.08)] border border-slate-100/60 overflow-hidden">
+            <!-- Header Section -->
+            <div class="p-10 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary shadow-xl shadow-primary/5">
+                        <span class="material-icons-round text-4xl">person</span>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-display font-black tracking-tight text-slate-900 mb-1">Profil Bilgilerim</h1>
+                        <p class="text-sm font-bold text-slate-400 m-0">{{ user.username }}</p>
+                    </div>
+                </div>
+                <div class="hidden sm:block">
+                    <span class="inline-block px-4 py-1.5 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-100">Aktif Hesap</span>
                 </div>
             </div>
+
+            <!-- Form Section -->
+            <div class="p-10 lg:p-14">
+                <form method="POST" class="space-y-8 m-0">
+                    {% csrf_token %}
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Phone -->
+                        <div class="space-y-3">
+                            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Telefon Numarası</label>
+                            <div class="relative group">
+                                <span class="material-icons-round absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-lg">smartphone</span>
+                                <input type="text" name="phone" class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all outline-none border hover:border-slate-200" 
+                                       placeholder="05xx xxx xx xx" value="{{ profile.phone|default:'' }}">
+                            </div>
+                        </div>
+
+                        <!-- City -->
+                        <div class="space-y-3">
+                            <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Şehir</label>
+                            <div class="relative group">
+                                <span class="material-icons-round absolute left-5 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-lg">location_city</span>
+                                <input type="text" name="city" class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 pl-14 pr-6 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all outline-none border hover:border-slate-200" 
+                                       placeholder="Örn: İstanbul" value="{{ profile.city|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Address -->
+                    <div class="space-y-3">
+                        <label class="block text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Teslimat Adresi</label>
+                        <div class="relative group">
+                            <span class="material-icons-round absolute left-5 top-5 text-slate-300 group-focus-within:text-primary transition-colors text-lg">home</span>
+                            <textarea name="address" class="w-full bg-slate-50/50 border-slate-100 rounded-3xl py-4 pl-14 pr-6 text-sm focus:ring-4 focus:ring-primary/5 focus:border-primary transition-all min-h-[140px] outline-none border hover:border-slate-200" 
+                                      placeholder="Siparişlerinizin gönderileceği açık adres...">{{ profile.address|default:'' }}</textarea>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="pt-6 flex flex-col sm:flex-row items-center justify-between gap-6 border-t border-slate-50 mt-10">
+                        <p class="text-[11px] font-bold text-slate-400 m-0"><span class="text-primary mr-1">*</span> Bilgileriniz SSL sertifikası ile korunmaktadır.</p>
+                        <button type="submit" class="w-full sm:w-auto px-12 bg-primary hover:bg-blue-600 text-white font-bold py-3.5 rounded-2xl transition-all shadow-xl shadow-primary/20 text-[11px] uppercase tracking-[0.2em] active:scale-[0.98] border-0 cursor-pointer">
+                            Değişiklikleri Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- Quick Links -->
+        <div class="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <a href="{% url 'orders' %}" class="bg-white p-4 rounded-2xl border border-slate-100 text-center hover:border-primary hover:shadow-lg transition-all text-decoration-none group">
+                <span class="material-icons-round text-slate-400 group-hover:text-primary mb-2">shopping_bag</span>
+                <p class="text-[10px] font-bold text-slate-600 m-0 uppercase tracking-widest">Siparişlerim</p>
+            </a>
+            <a href="{% url 'change_password' %}" class="bg-white p-4 rounded-2xl border border-slate-100 text-center hover:border-primary hover:shadow-lg transition-all text-decoration-none group">
+                <span class="material-icons-round text-slate-400 group-hover:text-primary mb-2">lock_reset</span>
+                <p class="text-[10px] font-bold text-slate-600 m-0 uppercase tracking-widest">Şifre Değiştir</p>
+            </a>
+             <a href="{% url 'cart' %}" class="bg-white p-4 rounded-2xl border border-slate-100 text-center hover:border-primary hover:shadow-lg transition-all text-decoration-none group">
+                <span class="material-icons-round text-slate-400 group-hover:text-primary mb-2">shopping_cart</span>
+                <p class="text-[10px] font-bold text-slate-600 m-0 uppercase tracking-widest">Sepetim</p>
+            </a>
+            <a href="{% url 'logout' %}" class="bg-white p-4 rounded-2xl border border-slate-100 text-center hover:border-red-200 hover:shadow-lg transition-all text-decoration-none group">
+                <span class="material-icons-round text-slate-400 group-hover:text-red-500 mb-2">logout</span>
+                <p class="text-[10px] font-bold text-slate-600 m-0 uppercase tracking-widest">Çıkış Yap</p>
+            </a>
         </div>
     </div>
-</div>
+</main>
 {% endblock %}

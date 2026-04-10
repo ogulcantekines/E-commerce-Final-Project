@@ -1,100 +1,136 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} Sepetim {% endblock %}
+{% block title %} Sepetim | OnlineShop {% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <h4 class="fw-bold mb-4" style="color: #2b397b">Ürünlerim</h4>
+<main class="min-h-screen bg-[#fdfdfd] pt-24 pb-20 px-4">
+    <div class="max-w-7xl mx-auto">
+        <!-- Breadcrumbs -->
+        <nav class="flex mb-10 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400" aria-label="Breadcrumb">
+            <a href="{% url 'index' %}" class="hover:text-primary transition-colors text-decoration-none mr-2">OnlineShop</a>
+            <span class="mr-2">/</span>
+            <span class="text-primary">Sepetim</span>
+        </nav>
 
-    <div class="row g-4">
-        <div class="col-lg-8">
-            {% if cart_items %}
-                {% for item in cart_items %}
-                <div class="card border-0 shadow-sm rounded-4 p-3 mb-3">
-                    <div class="row align-items-center cart-item-row">
-                        <div class="col-3 col-md-2 text-center">
-                            {% if item.product.image %}
-                                <img src="{{ item.product.image.url }}" class="img-fluid rounded" alt="{{ item.product.name }}" />
-                            {% else %}
-                                <img src="{% static 'images/default.jpg' %}" class="img-fluid rounded" alt="Resim Yok" />
-                            {% endif %}
-                        </div>
+        <div class="flex flex-col lg:flex-row gap-12 items-start">
+            <!-- Cart Items (Left) -->
+            <div class="w-full lg:w-2/3">
+                <div class="flex items-center justify-between mb-8">
+                    <h1 class="text-3xl font-display font-black tracking-tight text-slate-900 m-0">Sepetim</h1>
+                    <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest bg-slate-100 px-4 py-1.5 rounded-full">
+                        {% if cart_items %} {{ cart_items|length }} Ürün {% else %} Boş {% endif %}
+                    </span>
+                </div>
 
-                        <div class="col-6 col-md-5">
-                            <h6 class="fw-bold mb-0">{{ item.product.name }}</h6>
-                            <small class="text-muted">{{ item.product.brand|upper }}</small>
-                        </div>
-
-                        <div class="col-3 col-md-5 text-end">
-                            <div class="d-flex align-items-center justify-content-end mb-2">
-                                <div class="input-group input-group-sm w-auto border rounded bg-white overflow-hidden">
-                                    <a href="{% url 'remove_from_cart' item.product.id %}" class="btn btn-link text-dark text-decoration-none px-3 border-end">
-                                        <i class="fa-solid fa-minus small"></i>
-                                    </a>
-                                    
-                                    <input type="text" value="{{ item.quantity }}" class="form-control border-0 text-center p-0 fw-bold bg-white" style="width: 40px" readonly />
-                                    
-                                    <a href="{% url 'add_to_cart' item.product.id %}" class="btn btn-link text-dark text-decoration-none px-3 border-start">
-                                        <i class="fa-solid fa-plus small"></i>
-                                    </a>
+                {% if cart_items %}
+                    <div class="space-y-6">
+                        {% for item in cart_items %}
+                        <div class="group bg-white rounded-[2rem] p-6 shadow-xl shadow-slate-100/20 border border-slate-100/50 hover:shadow-2xl hover:border-primary/20 transition-all duration-500">
+                            <div class="flex flex-col sm:flex-row items-center gap-8">
+                                <!-- Image -->
+                                <div class="w-32 h-32 bg-slate-50 rounded-3xl p-4 flex items-center justify-center overflow-hidden shrink-0">
+                                    {% if item.product.image %}
+                                        <img src="{{ item.product.image.url }}" class="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" alt="{{ item.product.name }}" />
+                                    {% else %}
+                                        <span class="material-symbols-rounded text-slate-200 text-4xl">image_not_supported</span>
+                                    {% endif %}
                                 </div>
 
-                                <a href="{% url 'delete_cart_item' item.product.id %}" class="btn btn-link text-danger ms-3" title="Ürünü Sil">
-                                    <i class="fa-regular fa-trash-can fs-5"></i>
-                                </a>
-                            </div>
-                            <div class="mt-2">
-                                <span class="fw-bold fs-5" style="color: #2b397b">{{ item.item_total }} TL</span>
+                                <!-- Info -->
+                                <div class="flex-grow text-center sm:text-left">
+                                    <p class="text-[9px] font-black text-primary uppercase tracking-widest mb-1">{{ item.product.brand|upper }}</p>
+                                    <h3 class="text-lg font-bold text-slate-900 mb-2 leading-tight group-hover:text-primary transition-colors">{{ item.product.name }}</h3>
+                                    <p class="text-[10px] font-bold text-slate-400 m-0">Ürün Kodu: #{{ item.product.id|add:1000 }}</p>
+                                </div>
+
+                                <!-- Actions & Price -->
+                                <div class="flex flex-col items-center sm:items-end gap-6 shrink-0">
+                                    <div class="flex items-center gap-4">
+                                        <!-- Quantity Toggles -->
+                                        <div class="flex items-center bg-slate-50 rounded-2xl p-1 border border-slate-100 shadow-inner">
+                                            <a href="{% url 'remove_from_cart' item.product.id %}" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-500 hover:bg-white rounded-xl transition-all text-decoration-none">
+                                                <span class="material-icons-round text-lg">remove</span>
+                                            </a>
+                                            <input type="text" value="{{ item.quantity }}" class="w-10 text-center bg-transparent border-0 text-xs font-black text-slate-900 focus:outline-none" readonly />
+                                            <a href="{% url 'add_to_cart' item.product.id %}" class="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-green-500 hover:bg-white rounded-xl transition-all text-decoration-none">
+                                                <span class="material-icons-round text-lg">add</span>
+                                            </a>
+                                        </div>
+
+                                        <!-- Delete -->
+                                        <a href="{% url 'delete_cart_item' item.product.id %}" class="w-10 h-10 flex items-center justify-center bg-red-50 text-red-400 hover:bg-red-500 hover:text-white rounded-2xl transition-all text-decoration-none shadow-sm active:scale-90">
+                                            <span class="material-icons-round text-lg">delete_outline</span>
+                                        </a>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="text-2xl font-display font-black text-slate-900">{{ item.item_total }}</span>
+                                        <span class="text-xs font-bold text-primary">TL</span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        {% endfor %}
                     </div>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="card border-0 shadow-sm rounded-4 p-5 text-center">
-                    <div class="py-4">
-                        <i class="fa-solid fa-cart-shopping mb-4 text-muted" style="font-size: 5rem; opacity: 0.2;"></i>
-                        <h4 class="fw-bold text-muted">Sepetiniz şu an boş.</h4>
-                        <p class="text-muted mb-4">Harika ürünlerimizi keşfetmek için alışverişe devam edin!</p>
-                        <a href="{% url 'index' %}" class="btn btn-primary btn-lg rounded-pill px-5 fw-bold shadow-sm">
+                {% else %}
+                    <!-- Empty Cart -->
+                    <div class="bg-white rounded-[3rem] border-2 border-dashed border-slate-100 p-20 text-center">
+                        <div class="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-8 text-slate-200">
+                           <span class="material-icons-round text-6xl">shopping_cart</span>
+                        </div>
+                        <h2 class="text-2xl font-black text-slate-900 mb-4">Sepetiniz şu an boş.</h2>
+                        <p class="text-slate-400 text-sm max-w-sm mx-auto mb-10">Harika ürünlerimizi keşfetmek için alışverişe devam edin!</p>
+                        <a href="{% url 'index' %}" class="inline-block px-12 py-4 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/20 text-xs uppercase tracking-[0.2em] text-decoration-none active:scale-95">
                             Alışverişe Başla
                         </a>
                     </div>
-                </div>
-            {% endif %}
-        </div>
+                {% endif %}
+            </div>
 
-        <div class="col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 p-4 sticky-top cart-summary" style="top: 20px; z-index: 10;">
-                <h5 class="fw-bold mb-4" style="color: #2b397b">Sipariş Özeti</h5>
-                
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <span class="text-muted">Ürün Toplamı</span>
-                    <span class="fw-bold">{{ total_price }} TL</span>
-                </div>
-                
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <span class="text-muted small">Kargo</span>
-                    <span class="text-success small fw-bold">Ücretsiz</span>
-                </div>
-                
-                <hr class="mb-4">
+            <!-- Summary (Right) -->
+            <div class="w-full lg:w-1/3 lg:sticky lg:top-[110px]">
+                <div class="bg-white rounded-[2.5rem] p-10 shadow-[0_32px_100px_-20px_rgba(0,0,0,0.08)] border border-slate-100/60 overflow-hidden relative">
+                    <h2 class="text-2xl font-display font-black tracking-tight text-slate-900 mb-8">Sipariş Özeti</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="flex justify-between items-center group">
+                            <span class="text-sm font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Ürün Toplamı</span>
+                            <span class="text-sm font-black text-slate-900">{{ total_price }} TL</span>
+                        </div>
+                        <div class="flex justify-between items-center group">
+                            <span class="text-sm font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Kargo</span>
+                            <span class="text-[10px] font-black uppercase tracking-widest text-green-500 bg-green-50 px-3 py-1 rounded-full border border-green-100">Ücretsiz</span>
+                        </div>
+                        
+                        <div class="h-px bg-slate-50 my-6"></div>
 
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <span class="fw-bold fs-5">TOPLAM</span>
-                    <span class="fw-bold fs-4" style="color: #2b397b">{{ total_price }} TL</span>
-                </div>
+                        <div class="flex justify-between items-end mb-10">
+                            <div>
+                                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Toplam Ödenecek</p>
+                                <p class="text-4xl font-display font-black text-slate-900 m-0 leading-none">{{ total_price }}</p>
+                            </div>
+                            <span class="text-xl font-bold text-primary mb-1">TL</span>
+                        </div>
 
-                <a href="{% url 'checkout' %}" class="btn btn-lg w-100 py-3 text-white fw-bold shadow-sm" style="background-color: #2b397b; border-radius: 12px">
-                    Sepeti Onayla <i class="fa-solid fa-chevron-right ms-2 small"></i>
-                </a>
-                
-                <p class="text-muted small text-center mt-3">
-                    <i class="fa-solid fa-lock me-1"></i> Güvenli Ödeme Altyapısı
-                </p>
+                        <a href="{% url 'checkout' %}" class="flex items-center justify-center gap-3 w-full bg-primary hover:bg-blue-600 text-white font-bold py-4 rounded-2xl transition-all shadow-xl shadow-primary/20 text-xs uppercase tracking-[0.2em] text-decoration-none active:scale-[0.98] group">
+                            <span>Siparişi Onayla</span>
+                            <span class="material-icons-round group-hover:translate-x-1 transition-transform">chevron_right</span>
+                        </a>
+
+                        <div class="pt-6 flex items-center justify-center gap-4 opacity-40 grayscale hover:grayscale-0 transition-all hover:opacity-100">
+                             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhieYPUH5yyvWogbiAuXMCn2qwn8VuOqzDXe9L7mYFAV6cQHPiX1KcQC-lUEPEEhjvL_it2Blsuf10exYNBpWBmKyEuQEuM-ojZ4OaXc8LO3vIH36yk0QqGPEJdR3RIi7m_3_ZN9Zk1zWB6I7knsuyYCy2AUMvWpZjsSDOHNKbFJ7jheHe7R7mS18qNVFjpGAPrf8PhCDw5-pdAlPNaakOl_rnLexZG_CN8wSONfWBnUgXTnD0ZbN7Y5ZTU4QAtpO_jDoRq2JzBds" class="h-3" alt="Mastercard" />
+                             <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNCyAcytEyltn1zAlCeKGxn7SufUkWzhhmcp-KBOIIqg05ACEJLjO_4ggHhIOKcGkBqJL5vfUBMQJMwn748iDpz-7LkmXuSWuUiQnmI_izzM9izbIbcX3zuYQpxg0Wpa4Y6EmxdsIa9Hfzq3gkPoyPJb7qFHKr2P1-rp_ul_UnHZqJIu6pwq518K68ly1kAa9FMRiYTh92XZHHfe52pWauZaikGZs0E6w4qa5H2tiRJEkI5YGJJT39cDeJ6JD5XIBwU8BT3ABEupE" class="h-3" alt="Visa" />
+                        </div>
+                        <p class="text-[9px] font-bold text-slate-400 text-center mt-4">
+                            <span class="material-icons-round text-xs align-middle mr-1">enhanced_encryption</span> SSL 256-bit Güvenli Ödeme
+                        </p>
+                    </div>
+
+                    <!-- Ambient Glow -->
+                    <div class="absolute -top-12 -right-12 w-32 h-32 bg-primary/5 blur-3xl rounded-full"></div>
+                </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 {% endblock content %}
