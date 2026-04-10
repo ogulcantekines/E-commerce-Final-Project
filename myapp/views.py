@@ -39,7 +39,12 @@ def category_list(request, category_slug):
     page = request.GET.get('page')
     products = paginator.get_page(page)
 
-    return render(request, "list.html", {'categories': categories, 'products': products, 'category': category, 'available_brands': available_brands})
+    query_params = request.GET.copy()
+    if 'page' in query_params:
+        del query_params['page']
+    query_string = query_params.urlencode()
+
+    return render(request, "list.html", {'categories': categories, 'products': products, 'category': category, 'available_brands': available_brands, 'query_string': query_string})
 
 def product_detail(request, product_slug):
     categories = Category.objects.all()
@@ -160,7 +165,12 @@ def search(request):
     page = request.GET.get('page')
     products = paginator.get_page(page)
 
-    return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories, 'available_brands': available_brands})
+    query_params = request.GET.copy()
+    if 'page' in query_params:
+        del query_params['page']
+    query_string = query_params.urlencode()
+
+    return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories, 'available_brands': available_brands, 'query_string': query_string})
 
 # --- ÖDEME VE PROFİL ---
 @login_required
@@ -183,6 +193,12 @@ def checkout_view(request):
             continue
 
     if request.method == 'POST':
+        for item in cart_items:
+            product = item['product']
+            if product.stock < item['quantity']:
+                messages.error(request, f"Stok yetersiz! {product.name} ürününden stokta sadece {product.stock} adet kaldı.")
+                return redirect('cart')
+
         order = Order.objects.create(
             user=request.user,
             phone=request.POST.get('phone'),
@@ -192,12 +208,17 @@ def checkout_view(request):
             is_completed=True
         )
         for item in cart_items:
+            product = item['product']
             OrderItem.objects.create(
                 order=order,
-                product=item['product'],
+                product=product,
+                product_name=product.name,
                 quantity=item['quantity'],
-                price=item['product'].price
+                price=product.price
             )
+            product.stock -= item['quantity']
+            product.save()
+
         request.session['cart'] = {}
         request.session.modified = True
         messages.success(request, 'Siparişiniz başarıyla oluşturuldu!')
@@ -224,17 +245,20 @@ def orders(request):
 def add_review(request, product_slug):
     product = get_object_or_404(Product, slug=product_slug)
     if request.method == 'POST':
-        rating = int(request.POST.get('rating', 5))
-        comment = request.POST.get('comment', '').strip()
-        if comment and 1 <= rating <= 5:
-            Review.objects.update_or_create(
-                product=product,
-                user=request.user,
-                defaults={'rating': rating, 'comment': comment}
-            )
-            messages.success(request, 'Yorumunuz kaydedildi!')
-        else:
-            messages.error(request, 'Lütfen yorum ve puan giriniz.')
+        try:
+            rating = int(request.POST.get('rating', 5))
+            comment = request.POST.get('comment', '').strip()
+            if comment and 1 <= rating <= 5:
+                Review.objects.update_or_create(
+                    product=product,
+                    user=request.user,
+                    defaults={'rating': rating, 'comment': comment}
+                )
+                messages.success(request, 'Yorumunuz kaydedildi!')
+            else:
+                messages.error(request, 'Lütfen yorum ve puan giriniz.')
+        except ValueError:
+            messages.error(request, 'Geçersiz puan değeri.')
     return redirect('product_detail', product_slug=product_slug)
 
 @login_required

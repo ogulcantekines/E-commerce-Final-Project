@@ -31,6 +31,7 @@ class Product(models.Model):
     slug = models.SlugField(unique=True, blank=True, null=True)
     description = models.TextField(verbose_name="Ürün Açıklaması")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Fiyat")
+    stock = models.PositiveIntegerField(default=10, verbose_name="Stok Adedi")
     image = models.ImageField(upload_to='products/', verbose_name="Ürün Resmi")
 
     def save(self, *args, **kwargs):
@@ -83,13 +84,15 @@ class Order(models.Model):
 
 # 6. SİPARİŞ KALEMLERİ MODELİ
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name="items", verbose_name="Sipariş")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, verbose_name="Ürün")
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, verbose_name="Ürün")
+    product_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Satın Alınan Ürün Adı")
     quantity = models.PositiveIntegerField(default=1, verbose_name="Adet")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Sipariş Anındaki Fiyat")
 
     def __str__(self):
-        return f"{self.quantity} x {self.product.name}"
+        name = self.product.name if self.product else self.product_name
+        return f"{self.quantity} x {name}"
 
 # 7. ÜRÜN YORUM MODELİ
 class Review(models.Model):
