@@ -12,6 +12,44 @@
     <script src="https://kit.fontawesome.com/7e60c5d8c5.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
+    <!-- OnlineShop Design System (Aether Legacy) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Manrope:wght@500;600;700&display=swap" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,typography,container-queries"></script>
+    <script>
+      tailwind.config = {
+        corePlugins: {
+          preflight: false, // Maintain Bootstrap compatibility
+        },
+        theme: {
+          extend: {
+            colors: {
+              primary: "#3b82f6",
+            },
+            fontFamily: {
+              display: ["Plus Jakarta Sans", "sans-serif"],
+              sans: ["Inter", "sans-serif"],
+              manrope: ["Manrope", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.75rem",
+              xl: "1rem",
+              "2xl": "1.5rem",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #ffffff; }
+        .product-card:hover .product-image {
+            transform: scale(1.08) translateY(-5px);
+        }
+        .transition-all-300 {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+
     {% block extra_css %}{% endblock %}
 </head>
 <body class="d-flex flex-column min-vh-100">

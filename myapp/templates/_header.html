@@ -1,71 +1,65 @@
 {% load static %}
-<header class="py-3 border-bottom bg-white">
-    <div class="container">
-        <div class="header-top d-flex flex-wrap align-items-center gap-3">
-            <a href="{% url 'index' %}">
-                <img src="{% static 'images/logo.avif' %}" class="img-fluid" width="100" height="100" alt="logo" />
+<nav class="fixed top-0 w-full z-1030 bg-white/80 backdrop-blur-xl border-b border-slate-200/60 shadow-sm transition-all duration-300" style="position: sticky; z-index: 1030;">
+<div class="flex justify-between items-center px-8 py-3 max-w-screen-2xl mx-auto relative">
+    <!-- Brand Logo (Left) -->
+    <a href="{% url 'index' %}" class="flex-shrink-0 flex items-center gap-3 cursor-pointer active:scale-95 duration-200 ease-out text-decoration-none">
+        <img src="{% static 'images/logo.avif' %}" class="h-10 w-auto rounded-md shadow-sm" alt="OnlineShop Logo" />
+        <span class="text-xl font-extrabold tracking-tight text-slate-900 font-display m-0">Online<span class="text-primary">Shop</span></span>
+    </a>
+    
+    <!-- Perfectly Centered Navigation Links -->
+    <div class="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
+        <a class="text-[13px] font-bold tracking-widest uppercase font-manrope text-decoration-none transition-all hover:text-primary {% if request.path == '/' %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-500 hover:opacity-80{% endif %}" href="{% url 'index' %}">Ana Sayfa</a>
+        {% for cat in categories %}
+            <a class="text-[13px] font-bold tracking-widest uppercase font-manrope text-decoration-none transition-all hover:text-primary {% if request.path == cat.get_absolute_url %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-500 hover:opacity-80{% endif %}" href="{% url 'category_list' cat.slug %}">
+                {{ cat.name }}
             </a>
-
-            <form action="{% url 'search' %}" method="GET" class="header-search flex-grow-1">
-                <div class="input-group">
-                    <input type="text" name="q" class="form-control rounded-pill-start border-end-0 ps-4"
-                           placeholder="Aramak istediğiniz ürünü yazın" style="border-radius: 50px 0 0 50px" />
-                    <button type="submit" class="input-group-text bg-white border-start-0" style="border-radius: 0 50px 50px 0;">
-                        <i class="fa-solid fa-magnifying-glass text-secondary pe-3"></i>
-                    </button>
-                </div>
+        {% endfor %}
+    </div>
+    
+    <!-- Trailing Actions (Right) -->
+    <div class="flex items-center gap-2">
+        <div class="hidden lg:relative lg:flex items-center mr-2">
+            <form action="{% url 'search' %}" method="GET" class="m-0 p-0">
+                <input name="q" value="{{ request.GET.q|default:'' }}" class="w-48 bg-slate-100/50 border-none rounded-full py-2 pl-9 pr-4 focus:ring-2 focus:ring-primary/20 focus:w-64 text-sm transition-all duration-300" placeholder="Ara..." type="text"/>
+                <span class="material-icons-round absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
             </form>
+        </div>
 
-            <div class="header-actions d-flex gap-3 align-items-center">
-                <div class="dropdown">
-                    <button class="btn btn-light rounded-pill px-4 py-2 shadow-sm dropdown-toggle d-flex align-items-center justify-content-center border-0 w-100" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="background-color: #f8f9fa">
-                        <i class="fa-regular fa-user me-2 fs-5"></i>
-                        <span class="fw-bold text-truncate">
-                            {% if user.is_authenticated %}
-                                {{ user.first_name|default:user.username }}
-                            {% else %}
-                                Giriş Yap
-                            {% endif %}
-                        </span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end border-0 shadow mt-3 p-2" style="border-radius: 15px; min-width: 180px; z-index: 9999 !important; position: absolute;">
-                        {% if user.is_authenticated %}
-                            <li><a class="dropdown-item fw-bold py-2 rounded-3" href="{% url 'profile' %}">Profilim</a></li>
-                            <li><a class="dropdown-item fw-bold py-2 rounded-3" href="{% url 'orders' %}">Siparişlerim</a></li>
-                            <li><hr class="dropdown-divider"></li>
-                            <li><a class="dropdown-item fw-bold py-2 rounded-3 text-danger" href="{% url 'logout' %}">Çıkış Yap</a></li>
-                        {% else %}
-                            <li><a class="dropdown-item fw-bold py-2 rounded-3" href="{% url 'user_account' %}">Giriş Yap</a></li>
-                            <li><a class="dropdown-item fw-bold py-2 rounded-3" href="{% url 'user_account' %}">Üye Ol</a></li>
-                        {% endif %}
-                    </ul>
-                </div>
-
-                <div class="position-relative">
-                    <span class="position-absolute top-50 start-0 translate-middle badge rounded-circle bg-white text-dark border shadow-sm" style="width: 28px; height: 28px; line-height: 20px; z-index: 5; margin-left: -5px;">
-                        {{ cart_total_quantity|default:0 }}
-                    </span>
-                    <a href="{% url 'cart' %}" class="btn btn-light rounded-pill px-4 py-2 shadow-sm d-flex align-items-center justify-content-center border-0" style="background-color: #f8f9fa">
-                        <i class="fa-solid fa-cart-shopping me-2 fs-5 ms-2"></i>
-                        <span class="fw-bold">Sepetim</span>
-                    </a>
+        <!-- Account -->
+        <div class="relative group">
+            <button class="w-10 h-10 flex items-center justify-center text-slate-500 hover:text-primary hover:bg-slate-50 rounded-full active:scale-95 duration-300 ease-out transition-all border-0 bg-transparent hover:scale-110">
+                <span class="material-icons-round text-2xl">person_outline</span>
+            </button>
+            <div class="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-2xl border border-slate-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50 overflow-hidden transform origin-top-right scale-95 group-hover:scale-100">
+                <div class="p-2">
+                    {% if user.is_authenticated %}
+                        <div class="px-4 py-3 bg-slate-50 rounded-xl mb-1">
+                            <p class="text-[10px] font-bold text-slate-400 m-0 uppercase tracking-widest leading-none mb-1">Hesabım</p>
+                            <p class="text-sm font-bold text-slate-900 m-0 truncate">{{ user.username }}</p>
+                        </div>
+                        <a href="{% url 'profile' %}" class="block px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-primary rounded-xl text-decoration-none transition-colors">Profil Ayarları</a>
+                        <a href="{% url 'orders' %}" class="block px-4 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-primary rounded-xl text-decoration-none transition-colors">Siparişlerim</a>
+                        <div class="h-px bg-slate-100 my-1 mx-2"></div>
+                        <a href="{% url 'logout' %}" class="block px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl text-decoration-none transition-colors">Çıkış Yap</a>
+                    {% else %}
+                        <a href="{% url 'user_account' %}" class="block px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-primary rounded-xl text-decoration-none transition-colors">Giriş Yap</a>
+                        <a href="{% url 'user_account' %}" class="block px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-primary rounded-xl text-decoration-none transition-colors">Üye Ol</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
 
-        <nav class="navbar navbar-expand-lg bg-body-tertiary mt-3 rounded-4 px-3">
-            <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Navigasyonu aç">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav gap-lg-2">
-                    {% for cat in categories %}
-                    <li class="nav-item">
-                        <a class="nav-link fw-bold" href="{% url 'category_list' cat.slug %}">{{ cat.name }}</a>
-                    </li>
-                    {% endfor %}
-                </ul>
+        <!-- Enhanced Cart Button -->
+        <a href="{% url 'cart' %}" class="flex items-center gap-2 pl-3 pr-4 py-2 bg-primary text-white rounded-full hover:bg-blue-600 hover:scale-105 active:scale-95 duration-300 ease-out transition-all text-decoration-none shadow-lg hover:shadow-primary/40 shadow-primary/20 relative ml-1">
+            <div class="relative">
+                <span class="material-icons-round text-xl">shopping_cart</span>
+                {% if cart_total_quantity %}
+                <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] flex items-center justify-center h-4 w-4 rounded-full font-bold border-2 border-primary" style="line-height:0;">{{ cart_total_quantity }}</span>
+                {% endif %}
             </div>
-        </nav>
+            <span class="text-xs font-bold uppercase tracking-wider">Sepetim</span>
+        </a>
     </div>
-</header>
+</div>
+</nav>

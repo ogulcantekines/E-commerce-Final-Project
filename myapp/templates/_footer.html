@@ -1,91 +1,60 @@
- {% load static %}
- <footer class="text-light mt-5 p-5" style="background-color: #000000">
-          <div class="container">
-            <div class="row">
-              <div class="col-md-4 mb-4">
-                <h5 class="fw-bold mb-4 text-danger">Online Shop</h5>
-                <p class="text-secondary" style="font-size: 0.9rem">
-                  En yeni teknoloji ürünlerini en uygun fiyatlarla kapınıza
-                  getiriyoruz. Müşteri memnuniyeti bizim önceliğimizdir.
-                </p>
-                <div class="d-flex gap-3 mt-3">
-                  <a href="#" class="text-light"
-                    ><i class="fa-brands fa-facebook fa-lg"></i
-                  ></a>
-                  <a href="#" class="text-light"
-                    ><i class="fa-brands fa-instagram fa-lg"></i
-                  ></a>
-                  <a href="#" class="text-light"
-                    ><i class="fa-brands fa-x-twitter fa-lg"></i
-                  ></a>
-                </div>
-              </div>
-
-              <div class="col-6 col-md-2 mb-4">
-                <h6 class="fw-bold mb-4">Kurumsal</h6>
-                <ul class="list-unstyled">
-                  <li class="mb-2">
-                    <a href="#" class="text-secondary text-decoration-none"
-                      >Hakkımızda</a
-                    >
-                  </li>
-                  <li class="mb-2">
-                    <a href="#" class="text-secondary text-decoration-none"
-                      >Kampanyalar</a
-                    >
-                  </li>
-                  <li class="mb-2">
-                    <a href="#" class="text-secondary text-decoration-none"
-                      >İletişim</a
-                    >
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-6 col-md-2 mb-4">
-                <h6 class="fw-bold mb-4">Yardım</h6>
-                <ul class="list-unstyled">
-                  <li class="mb-2">
-                    <a href="#" class="text-secondary text-decoration-none"
-                      >Sipariş Takibi</a
-                    >
-                  </li>
-                  <li class="mb-2">
-                    <a href="#" class="text-secondary text-decoration-none"
-                      >İade Koşulları</a
-                    >
-                  </li>
-                  <li class="mb-2">
-                    <a href="#" class="text-secondary text-decoration-none"
-                      >S.S.S</a
-                    >
-                  </li>
-                </ul>
-              </div>
-
-              <div class="col-md-4 mb-4">
-                <h6 class="fw-bold mb-4">Fırsatları Kaçırma</h6>
-                <div class="input-group">
-                  <input
-                    type="email"
-                    class="form-control bg-dark border-secondary text-light"
-                    placeholder="E-posta adresiniz"
-                  />
-                  <button class="btn btn-primary" type="button">
-                    Abone Ol
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <hr class="border-secondary mt-4" />
-            <div class="row">
-              <div
-                class="col text-center text-secondary mt-2"
-                style="font-size: 0.85rem"
-              >
-                © Online Shop • Tüm hakları saklıdır.
-              </div>
-            </div>
-          </div>
-        </footer>
+{% load static %}
+<footer class="bg-slate-950 text-white mt-auto pt-16 pb-8 border-t border-slate-900 w-full z-10" style="position: relative;">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-12 mb-16">
+<div class="space-y-6">
+<div class="flex items-center gap-3">
+    <img src="{% static 'images/logo.avif' %}" class="h-10 w-auto rounded-md shadow-sm opacity-90 grayscale contrast-200" alt="OnlineShop Logo" />
+    <span class="text-xl font-display font-extrabold tracking-tight">Online<span class="text-primary">Shop</span></span>
+</div>
+<p class="text-slate-400 leading-relaxed text-sm m-0">En yeni teknoloji ürünlerini en uygun fiyatlarla kapınıza getiriyoruz. Müşteri memnuniyeti bizim önceliğimizdir.</p>
+<div class="flex gap-4">
+<a class="w-10 h-10 text-decoration-none rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary transition-colors text-white" href="#">
+<i class="fa-brands fa-facebook fa-lg"></i>
+</a>
+<a class="w-10 h-10 text-decoration-none rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary transition-colors text-white" href="#">
+<i class="fa-brands fa-instagram fa-lg"></i>
+</a>
+<a class="w-10 h-10 text-decoration-none rounded-full bg-slate-900 flex items-center justify-center hover:bg-primary transition-colors text-white" href="#">
+<i class="fa-brands fa-x-twitter fa-lg"></i>
+</a>
+</div>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase tracking-widest mb-6 text-primary">Kurumsal</h4>
+<ul class="space-y-4 text-sm text-slate-400 p-0 m-0" style="list-style-type: none;">
+<li><a class="hover:text-white transition-colors text-decoration-none text-slate-400" href="#">Hakkımızda</a></li>
+<li><a class="hover:text-white transition-colors text-decoration-none text-slate-400" href="#">Kampanyalar</a></li>
+<li><a class="hover:text-white transition-colors text-decoration-none text-slate-400" href="#">İletişim</a></li>
+<li><a class="hover:text-white transition-colors text-decoration-none text-slate-400" href="#">Mağazalarımız</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase tracking-widest mb-6 text-primary">Yardım</h4>
+<ul class="space-y-4 text-sm text-slate-400 p-0 m-0" style="list-style-type: none;">
+<li><a class="hover:text-white transition-colors text-decoration-none text-slate-400" href="#">Sipariş Takibi</a></li>
+<li><a class="hover:text-white transition-colors text-decoration-none text-slate-400" href="#">İade Koşulları</a></li>
+<li><a class="hover:text-white transition-colors text-decoration-none text-slate-400" href="#">Sıkça Sorulan Sorular</a></li>
+<li><a class="hover:text-white transition-colors text-decoration-none text-slate-400" href="#">KVKK</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-sm font-bold uppercase tracking-widest mb-6 text-primary">Fırsatları Kaçırma</h4>
+<p class="text-xs text-slate-400 mb-4 leading-relaxed">Bültenimize abone olun, en yeni ürünlerden ve indirimlerden ilk siz haberdar olun.</p>
+<form class="space-y-3 m-0">
+<div class="relative">
+<input class="w-full bg-slate-900 border border-slate-800 rounded-xl py-3 px-4 text-sm focus:ring-primary focus:border-primary text-white" placeholder="E-posta adresiniz" type="email"/>
+</div>
+<button class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 border-0" type="button">Abone Ol</button>
+</form>
+</div>
+</div>
+<div class="pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+<p class="m-0">© 2024 Online Shop. Tüm hakları saklıdır.</p>
+<div class="flex gap-6">
+<img alt="Mastercard" class="h-4 opacity-50 grayscale hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhieYPUH5yyvWogbiAuXMCn2qwn8VuOqzDXe9L7mYFAV6cQHPiX1KcQC-lUEPEEhjvL_it2Blsuf10exYNBpWBmKyEuQEuM-ojZ4OaXc8LO3vIH36yk0QqGPEJdR3RIi7m_3_ZN9Zk1zWB6I7knsuyYCy2AUMvWpZjsSDOHNKbFJ7jheHe7R7mS18qNVFjpGAPrf8PhCDw5-pdAlPNaakOl_rnLexZG_CN8wSONfWBnUgXTnD0ZbN7Y5ZTU4QAtpO_jDoRq2JzBds"/>
+<img alt="Visa" class="h-4 opacity-50 grayscale hover:grayscale-0 transition-all" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNCyAcytEyltn1zAlCeKGxn7SufUkWzhhmcp-KBOIIqg05ACEJLjO_4ggHhIOKcGkBqJL5vfUBMQJMwn748iDpz-7LkmXuSWuUiQnmI_izzM9izbIbcX3zuYQpxg0Wpa4Y6EmxdsIa9Hfzq3gkPoyPJb7qFHKr2P1-rp_ul_UnHZqJIu6pwq518K68ly1kAa9FMRiYTh92XZHHfe52pWauZaikGZs0E6w4qa5H2tiRJEkI5YGJJT39cDeJ6JD5XIBwU8BT3ABEupE"/>
+</div>
+</div>
+</div>
+</footer>
