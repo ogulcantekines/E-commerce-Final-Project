@@ -1,84 +1,181 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} Giriş Yap / Üye Ol {% endblock %}
+{% block title %} Giriş Yap / Üye Ol | OnlineShop {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row justify-content-center">
-        <div class="col-md-5">
-            <div class="card shadow-sm border-0" style="border-radius: 15px; overflow: hidden;">
-                <div class="card-body p-0">
-                    <ul class="nav nav-tabs nav-justified border-bottom-0" id="loginTab" role="tablist">
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link active fw-bold py-3 text-dark border-0" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">
-                                Giriş Yap
-                            </button>
-                        </li>
-                        <li class="nav-item" role="presentation">
-                            <button class="nav-link fw-bold py-3 text-dark border-0" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">
-                                Üye Ol
-                            </button>
-                        </li>
-                    </ul>
+<main class="min-h-screen bg-[#fdfdfd] flex items-center justify-center pt-4 pb-20 px-4 transition-all duration-500">
+    <div class="max-w-5xl w-full">
+        <!-- Brand / Header -->
+        <div class="flex flex-col md:flex-row items-center justify-between mb-12 gap-6">
+            <div class="flex items-center gap-4">
+                <img src="{% static 'images/logo.avif' %}" class="h-14 w-auto rounded-2xl shadow-xl shadow-primary/10" alt="OnlineShop Logo" />
+                <div>
+                    <h1 class="text-4xl font-display font-black tracking-tighter text-slate-900 m-0">Online<span class="text-primary">Shop</span></h1>
+                    <p class="text-[10px] font-bold text-slate-400 uppercase tracking-[0.3em] m-0">Geleceğin Teknolojisi, Bugün Kapınızda</p>
+                </div>
+            </div>
+            <div class="hidden md:flex items-center gap-8">
+                <div class="flex flex-col items-end">
+                    
+                </div>
+            </div>
+        </div>
 
-                    <div class="tab-content p-4" id="loginTabContent">
-                        
-                        <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                            <form action="{% url 'user_account' %}" method="POST">
-                                {% csrf_token %}
-                                <div class="mb-3 mt-3">
-                                    <input type="email" name="email" class="form-control bg-light border-0 py-3" placeholder="E-mail" required />
-                                </div>
-                                <div class="mb-2">
-                                    <input type="password" name="sifre" class="form-control bg-light border-0 py-3" placeholder="Şifre" required />
-                                </div>
-                                <div class="mb-3 text-end">
-                                    <a href="{% url 'password_reset' %}" class="text-muted small" style="text-decoration: none;">Şifremi Unuttum?</a>
-                                </div>
-                                <button type="submit" name="login_submit" class="btn btn-primary w-100 py-3 fw-bold" style="background-color: #243474; border: none">
-                                    Giriş Yap
-                                </button>
-                            </form>
+        <!-- Widescreen Auth Card -->
+        <div class="bg-white rounded-[3rem] shadow-[0_32px_100px_-20px_rgba(0,0,0,0.1)] border border-slate-100/60 overflow-hidden flex flex-col md:flex-row min-h-[550px]">
+            
+            <!-- Left Side: Hero / Info (Visual) -->
+            <div class="w-full md:w-1/3 bg-slate-900 p-12 text-white flex flex-col justify-between relative overflow-hidden">
+                <div class="relative z-10">
+                    <span class="inline-block px-3 py-1 bg-primary/20 backdrop-blur-md rounded-full text-[9px] font-black uppercase tracking-widest text-primary mb-6">Özel Üyelik</span>
+                    <h2 class="text-3xl font-display font-black leading-tight mb-4">Ayrıcalıklı Alışverişe Bir Adım Daha.</h2>
+                    <p class="text-slate-400 text-sm leading-relaxed">Üye olarak özel indirimlerden, hızlı teslimat seçeneklerinden ve size özel teknoloji tavsiyelerinden yararlanın.</p>
+                </div>
+
+                <div class="space-y-6 relative z-10">
+                    <div class="flex items-center gap-4 group">
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary transition-all duration-500">
+                           <span class="material-icons-round text-lg">verified</span>
                         </div>
-
-                        <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                            <form action="{% url 'user_account' %}" method="POST">
-                                {% csrf_token %}
-                                <div class="mb-3 mt-3">
-                                    <input type="text" name="ad_soyad" class="form-control bg-light border-0 py-3" placeholder="Ad Soyad" required />
-                                </div>
-                                <div class="mb-3">
-                                    <input type="email" name="email" class="form-control bg-light border-0 py-3" placeholder="E-Posta" required />
-                                </div>
-                                <div class="mb-3">
-                                    <input type="password" name="sifre" class="form-control bg-light border-0 py-3" placeholder="Şifre" required />
-                                </div>
-                                <div class="mb-4">
-                                    <input type="password" name="sifre_dogrula" class="form-control bg-light border-0 py-3" placeholder="Şifre Doğrulama" required />
-                                </div>
-                                <button type="submit" name="register_submit" class="btn btn-primary w-100 py-3 fw-bold" style="background-color: #243474; border: none">
-                                    Üyeliği Tamamla
-                                </button>
-                            </form>
-                        </div>
-
+                        <span class="text-xs font-bold uppercase tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">Garanti Takibi</span>
                     </div>
+                    <div class="flex items-center gap-4 group">
+                        <div class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center border border-white/10 group-hover:bg-primary transition-all duration-500">
+                           <span class="material-icons-round text-lg">local_shipping</span>
+                        </div>
+                        <span class="text-xs font-bold uppercase tracking-widest opacity-70 group-hover:opacity-100 transition-opacity">Hızlı İade</span>
+                    </div>
+                </div>
+
+                <!-- Abstract Glow -->
+                <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-primary/20 blur-[100px] rounded-full"></div>
+            </div>
+
+            <!-- Right Side: Forms (Logic) -->
+            <div class="w-full md:w-2/3 p-10 lg:p-16 flex flex-col relative bg-white">
+                <!-- Navigation -->
+                <div class="flex items-center gap-10 mb-12 border-b border-slate-50 relative pb-4">
+                    <button onclick="switchTab('login')" id="login-tab-btn" class="relative text-sm font-black uppercase tracking-widest text-slate-900 transition-all border-0 bg-transparent cursor-pointer group">
+                        Giriş Yap
+                        <div id="login-indicator" class="absolute -bottom-[18px] left-0 w-full h-[3px] bg-primary rounded-full transition-all duration-300 scale-x-100"></div>
+                    </button>
+                    <button onclick="switchTab('register')" id="register-tab-btn" class="relative text-sm font-black uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-all border-0 bg-transparent cursor-pointer group">
+                        Yeni Üyelik
+                        <div id="register-indicator" class="absolute -bottom-[18px] left-0 w-full h-[3px] bg-primary rounded-full transition-all duration-300 scale-x-0"></div>
+                    </button>
+                </div>
+
+                <!-- Forms Area -->
+                <div class="flex-grow">
+                    <!-- Login Panel -->
+                    <div id="login-panel" class="space-y-8 animate-fade-in-up">
+                        <form action="{% url 'user_account' %}" method="POST" class="space-y-6 m-0">
+                            {% csrf_token %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 items-end">
+                                <div class="space-y-2">
+                                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">E-Posta</label>
+                                    <input type="email" name="email" class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 px-6 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none border hover:border-slate-200" placeholder="ornek@mail.com" required />
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="flex justify-between items-center px-4">
+                                        <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400">Şifre</label>
+                                        <a href="{% url 'password_reset' %}" class="text-[9px] font-bold text-primary hover:underline text-decoration-none">Sıfırla</a>
+                                    </div>
+                                    <input type="password" name="sifre" class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 px-6 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none border hover:border-slate-200" placeholder="••••••••" required />
+                                </div>
+                            </div>
+                            <button type="submit" name="login_submit" class="w-full md:w-auto px-12 bg-primary hover:bg-blue-600 text-white font-bold py-3.5 rounded-2xl transition-all shadow-xl shadow-primary/20 text-[11px] uppercase tracking-[0.2em] active:scale-[0.98] border-0 !mt-16 cursor-pointer">
+                                Hesabına Giriş Yap
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Register Panel (Enhanced) -->
+                    <div id="register-panel" class="hidden space-y-8 animate-fade-in-up">
+                        <form action="{% url 'user_account' %}" method="POST" class="space-y-6 m-0">
+                            {% csrf_token %}
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-6">
+                                <div class="space-y-2">
+                                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Ad Soyad</label>
+                                    <input type="text" name="ad_soyad" class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 px-6 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none border hover:border-slate-200" placeholder="Adınız Soyadınız" required />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">E-Posta</label>
+                                    <input type="email" name="email" class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 px-6 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none border hover:border-slate-200" placeholder="ornek@mail.com" required />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Şifre</label>
+                                    <input type="password" name="sifre" class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 px-6 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none border hover:border-slate-200" placeholder="••••••••" required />
+                                </div>
+                                <div class="space-y-2">
+                                    <label class="text-[9px] font-black uppercase tracking-[0.2em] text-slate-400 ml-4">Şifre Onay</label>
+                                    <input type="password" name="sifre_dogrula" class="w-full bg-slate-50/50 border-slate-100 rounded-2xl py-4 px-6 text-sm focus:ring-2 focus:ring-primary/10 focus:border-primary transition-all outline-none border hover:border-slate-200" placeholder="••••••••" required />
+                                </div>
+                            </div>
+                            <button type="submit" name="register_submit" class="w-full md:w-auto px-12 bg-slate-900 hover:bg-black text-white font-bold py-3.5 rounded-2xl transition-all shadow-xl shadow-slate-900/10 text-[11px] uppercase tracking-[0.2em] active:scale-[0.98] border-0 !mt-32 cursor-pointer">
+                                Üyeliği Tamamla
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Trust Badges -->
+                <div class="mt-auto pt-10 flex items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all hover:opacity-100">
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhieYPUH5yyvWogbiAuXMCn2qwn8VuOqzDXe9L7mYFAV6cQHPiX1KcQC-lUEPEEhjvL_it2Blsuf10exYNBpWBmKyEuQEuM-ojZ4OaXc8LO3vIH36yk0QqGPEJdR3RIi7m_3_ZN9Zk1zWB6I7knsuyYCy2AUMvWpZjsSDOHNKbFJ7jheHe7R7mS18qNVFjpGAPrf8PhCDw5-pdAlPNaakOl_rnLexZG_CN8wSONfWBnUgXTnD0ZbN7Y5ZTU4QAtpO_jDoRq2JzBds" class="h-3" alt="Mastercard" />
+                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNCyAcytEyltn1zAlCeKGxn7SufUkWzhhmcp-KBOIIqg05ACEJLjO_4ggHhIOKcGkBqJL5vfUBMQJMwn748iDpz-7LkmXuSWuUiQnmI_izzM9izbIbcX3zuYQpxg0Wpa4Y6EmxdsIa9Hfzq3gkPoyPJb7qFHKr2P1-rp_ul_UnHZqJIu6pwq518K68ly1kAa9FMRiYTh92XZHHfe52pWauZaikGZs0E6w4qa5H2tiRJEkI5YGJJT39cDeJ6JD5XIBwU8BT3ABEupE" class="h-3" alt="Visa" />
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 
 <style>
-    .nav-tabs .nav-link.active {
-        background-color: #ffffff !important;
-        border-bottom: 3px solid #243474 !important;
-        color: #243474 !important;
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
     }
-    .nav-tabs .nav-link {
-        background-color: #f8f9fa;
-        border-radius: 0;
+    .animate-fade-in-up {
+        animation: fadeInUp 0.5s ease-out forwards;
     }
 </style>
-{% endblock content %}
+
+<script>
+function switchTab(tab) {
+    const loginPanel = document.getElementById('login-panel');
+    const registerPanel = document.getElementById('register-panel');
+    const loginBtn = document.getElementById('login-tab-btn');
+    const registerBtn = document.getElementById('register-tab-btn');
+    const loginInd = document.getElementById('login-indicator');
+    const registerInd = document.getElementById('register-indicator');
+
+    if (tab === 'login') {
+        registerPanel.classList.add('hidden');
+        loginPanel.classList.remove('hidden');
+        
+        // Button Styles
+        loginBtn.classList.remove('text-slate-400');
+        loginBtn.classList.add('text-slate-900');
+        registerBtn.classList.add('text-slate-400');
+        registerBtn.classList.remove('text-slate-900');
+        
+        // Indicator
+        loginInd.style.transform = 'scaleX(1)';
+        registerInd.style.transform = 'scaleX(0)';
+    } else {
+        loginPanel.classList.add('hidden');
+        registerPanel.classList.remove('hidden');
+        
+        // Button Styles
+        registerBtn.classList.remove('text-slate-400');
+        registerBtn.classList.add('text-slate-900');
+        loginBtn.classList.add('text-slate-400');
+        loginBtn.classList.remove('text-slate-900');
+        
+        // Indicator
+        registerInd.style.transform = 'scaleX(1)';
+        loginInd.style.transform = 'scaleX(0)';
+    }
+}
+</script>
+{% endblock %}

@@ -1,135 +1,203 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} {{ product.name }} - Detay {% endblock %}
+{% block title %} {{ product.name }} | OnlineShop {% endblock %}
+
 {% block content %}
-<main class="container my-5">
-    <div class="row align-items-stretch g-5">
-        <div class="col-md-5">
-            <div id="productCarousel" class="carousel slide carousel-dark h-100 d-flex align-items-center bg-white product-img-container">
-                <div class="carousel-inner">
-                    <div class="carousel-item active text-center">
-                        {% if product.image %}
-                            <img src="{{ product.image.url }}" class="img-fluid h-100" alt="{{ product.name }}" />
-                        {% else %}
-                            <img src="{% static 'images/default.jpg' %}" class="img-fluid h-100" alt="Görsel Yok" />
-                        {% endif %}
-                    </div>
+<main class="pt-[70px] bg-slate-50/30 min-h-screen">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Breadcrumbs -->
+    <nav class="flex mb-8 text-xs font-bold uppercase tracking-widest text-slate-400 group" aria-label="Breadcrumb">
+        <ol class="flex items-center space-x-2 p-0 m-0 list-none">
+            <li><a href="{% url 'index' %}" class="hover:text-primary transition-colors text-decoration-none text-slate-400">Ana Sayfa</a></li>
+            <li><span class="material-icons-round text-sm mx-1">chevron_right</span></li>
+            <li><a href="{% url 'category_list' product.category.slug %}" class="hover:text-primary transition-colors text-decoration-none text-slate-400">{{ product.category.name }}</a></li>
+            <li><span class="material-icons-round text-sm mx-1 text-slate-300">chevron_right</span></li>
+            <li class="text-slate-900">{{ product.name }}</li>
+        </ol>
+    </nav>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-16 items-start">
+        <!-- Product Images (Left) -->
+        <div class="lg:col-span-5 lg:sticky lg:top-[120px]">
+            <div class="relative aspect-square bg-white rounded-[2.5rem] shadow-2xl shadow-slate-200/50 flex items-center justify-center p-12 overflow-hidden group">
+                {% if product.image %}
+                    <img src="{{ product.image.url }}" class="w-full h-full object-contain drop-shadow-2xl transition-transform duration-700 group-hover:scale-110" alt="{{ product.name }}" id="mainProductImage" />
+                {% else %}
+                    <img src="{% static 'images/default.jpg' %}" class="w-full h-full object-contain" alt="Görsel Yok" />
+                {% endif %}
+                
+                <!-- Zoom Indicator icon -->
+                <div class="absolute bottom-6 right-6 w-10 h-10 rounded-full bg-white/80 backdrop-blur-md flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                    <span class="material-icons-round text-slate-400">zoom_in</span>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-7">
-            <div class="card border-0 h-100">
-                <div class="card-body p-0 d-flex flex-column h-100">
-                    <p class="text-muted small mb-1">{{ product.category.name }} / {{ product.brand }}</p>
-
-                    <h2 class="fw-bold mb-4" style="color: #243474">
-                        {{ product.name }}
-                    </h2>
-
-                    <div class="p-4 mb-4 rounded-4 shadow-sm" style="background-color: #f8f9fa; border-left: 6px solid #0d6efd;">
-                        <span class="display-5 fw-bold text-primary">{{ product.price }}</span>
-                        <span class="fs-3 fw-bold text-primary">TL</span>
+        <!-- Product Specs (Right) -->
+        <div class="lg:col-span-7 space-y-10">
+            <div class="space-y-4">
+                <div class="flex items-center gap-3">
+                    <span class="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black uppercase tracking-widest text-slate-500">{{ product.brand }}</span>
+                    {% if product.stock > 0 %}
+                        <span class="flex items-center gap-1.5 text-[10px] font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full uppercase tracking-widest">
+                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span> Stokta Var
+                        </span>
+                    {% else %}
+                        <span class="text-[10px] font-bold text-red-600 bg-red-50 px-3 py-1 rounded-full uppercase tracking-widest">Stokta Yok</span>
+                    {% endif %}
+                </div>
+                
+                <h1 class="text-4xl lg:text-5xl font-display font-black text-slate-900 leading-tight m-0">
+                    {{ product.name }}
+                </h1>
+                
+                <div class="flex items-center gap-4">
+                    <div class="flex items-center text-warning">
+                        {% for i in "12345" %}
+                            {% if forloop.counter <= avg_rating|default:0 %}
+                                <span class="material-icons-round text-lg">star</span>
+                            {% else %}
+                                <span class="material-icons-round text-lg text-slate-200">star</span>
+                            {% endif %}
+                        {% endfor %}
                     </div>
+                    <span class="text-sm font-bold text-slate-400">({{ reviews.count }} Değerlendirme)</span>
+                </div>
+            </div>
 
-                    <div class="mb-4">
-                        <h6 class="fw-bold mb-3">Ürün Hakkında</h6>
-                        <p class="text-secondary" style="line-height: 1.8; font-size: 0.95rem">
-                            {{ product.description|linebreaks }}
-                        </p>
-                    </div>
+            <div class="p-8 bg-white rounded-3xl shadow-xl shadow-slate-100/30">
+                <div class="flex items-baseline gap-3 mb-8">
+                    <span class="text-5xl font-display font-black text-slate-900">{{ product.price }}</span>
+                    <span class="text-xl font-bold text-primary">TL</span>
+                    <span class="ml-4 text-sm text-slate-400 line-through font-medium">{{ product.price|add:1500 }} TL</span>
+                </div>
 
-                    <div class="mt-auto">
-                        <div class="d-flex gap-2 mb-4 detail-action-group">
-                            <a href="{% url 'add_to_cart' product.id %}" class="text-decoration-none d-flex flex-grow-1">
-    <button class="btn btn-primary flex-grow-1 py-3 rounded-pill fw-bold" style="background-color: #243474; border: none">
-        <i class="fa-solid fa-cart-shopping me-2"></i> Sepete Ekle
-    </button>
-</a>
-                            <button class="btn btn-outline-secondary rounded-circle d-flex align-items-center justify-content-center" style="width: 55px; height: 55px">
-                                <i class="fa-regular fa-heart"></i>
-                            </button>
-                        </div>
+                <div class="space-y-4">
+                    <div class="flex gap-3">
+                        <a href="{% url 'add_to_cart' product.id %}" class="flex-grow bg-primary hover:bg-blue-600 text-white font-bold py-3.5 rounded-2xl transition-all shadow-xl shadow-primary/20 flex items-center justify-center gap-3 text-xs uppercase tracking-[0.2em] text-decoration-none group active:scale-[0.98]">
+                            <span class="material-icons-round group-hover:-translate-x-1 transition-transform">shopping_cart</span>
+                            Sepete Ekle
+                        </a>
+                        <button class="w-14 h-14 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-300 hover:text-red-500 hover:border-red-500 hover:bg-red-50 transition-all group border-0 bg-transparent active:scale-90">
+                            <span class="material-icons-round text-2xl group-hover:scale-110 transition-transform">favorite_border</span>
+                        </button>
                     </div>
+                </div>
+
+                <div class="mt-8 pt-8 border-t border-slate-50 flex items-center justify-between text-xs font-bold text-slate-400 uppercase tracking-widest">
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons-round text-primary text-sm">verified_user</span> 2 Yıl Garanti
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons-round text-primary text-sm">local_shipping</span> Ücretsiz Kargo
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="material-icons-round text-primary text-sm">swap_horiz</span> 14 Gün İade
+                    </div>
+                </div>
+            </div>
+
+            <div class="space-y-4">
+                <h3 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-4 m-0">Ürün Açıklaması</h3>
+                <div class="text-slate-600 leading-loose text-sm p-2">
+                    {{ product.description|linebreaks }}
                 </div>
             </div>
         </div>
     </div>
-</main>
 
-<div class="container mb-5">
-    <div class="row g-4">
-        <!-- Yorum Formu -->
-        <div class="col-md-4">
-            <div class="card border-0 shadow-sm p-4" style="border-radius: 20px;">
-                {% if avg_rating %}
-                <div class="text-center mb-3">
-                    <span class="display-6 fw-bold text-warning">{{ avg_rating }}</span>
-                    <span class="text-muted">/5</span>
-                    <div class="text-muted small">{{ reviews.count }} yorum</div>
+    <!-- Reviews Section -->
+    <div class="mt-32">
+        <div class="flex items-baseline gap-4 mb-12">
+            <h2 class="text-3xl font-display font-black text-slate-900 m-0">Kullanıcı Yorumları</h2>
+            <div class="flex-grow h-px bg-slate-100"></div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-16">
+            <!-- Review Stats & Form -->
+            <div class="lg:col-span-4 space-y-8">
+                <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-xl shadow-slate-100/20 text-center">
+                    {% if avg_rating %}
+                        <div class="text-7xl font-display font-black text-slate-900 mb-2">{{ avg_rating }}</div>
+                        <div class="flex justify-center text-warning mb-4">
+                            {% for i in "12345" %}
+                                <span class="material-icons-round">star</span>
+                            {% endfor %}
+                        </div>
+                        <div class="text-sm font-bold text-slate-400 uppercase tracking-widest">Ortalama Puan</div>
+                    {% else %}
+                        <div class="text-slate-400 italic py-8">Henüz puanlama yapılmamış.</div>
+                    {% endif %}
                 </div>
-                <hr>
-                {% endif %}
+
                 {% if user.is_authenticated %}
-                    <h5 class="fw-bold mb-3">{% if user_review %}Yorumunuzu Düzenleyin{% else %}Yorum Yapın{% endif %}</h5>
-                    <form method="POST" action="{% url 'add_review' product.slug %}">
+                <div class="bg-white border border-slate-100 p-8 rounded-3xl shadow-xl shadow-slate-100/20">
+                    <h4 class="text-xl font-bold mb-6 text-slate-900">{% if user_review %}Yorumu Düzenle{% else %}Deneyimini Paylaş{% endif %}</h4>
+                    <form method="POST" action="{% url 'add_review' product.slug %}" class="space-y-5 m-0">
                         {% csrf_token %}
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Puanınız</label>
-                            <select name="rating" class="form-select rounded-pill">
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">Puanın</label>
+                            <select name="rating" class="w-full bg-white border-slate-200 text-slate-900 rounded-xl py-3 px-4 focus:ring-primary focus:border-primary text-sm transition-all outline-none">
                                 {% for i in "54321" %}
-                                <option value="{{ i }}" {% if user_review.rating == i|add:0 %}selected{% endif %}>
-                                    {{ i }} Yıldız
-                                </option>
+                                <option value="{{ i }}" {% if user_review.rating == i|add:0 %}selected{% endif %}>{{ i }} Yıldız</option>
                                 {% endfor %}
                             </select>
                         </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-bold">Yorumunuz</label>
-                            <textarea name="comment" class="form-control rounded-4" rows="3" placeholder="Bu ürün hakkında ne düşünüyorsunuz?">{{ user_review.comment|default:'' }}</textarea>
+                        <div>
+                            <label class="block text-[10px] font-black uppercase tracking-widest text-slate-400 mb-2 ml-2">Yorumun</label>
+                            <textarea name="comment" class="w-full bg-white border-slate-200 text-slate-900 rounded-xl py-4 px-4 focus:ring-primary focus:border-primary text-sm min-h-[120px] transition-all outline-none" placeholder="Ürün beklentilerini karşıladı mı?">{{ user_review.comment|default:'' }}</textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary w-100 rounded-pill fw-bold">
-                            {% if user_review %}Güncelle{% else %}Gönder{% endif %}
+                        <button type="submit" class="w-full bg-primary hover:bg-blue-600 text-white font-bold py-3.5 rounded-xl transition-all shadow-lg shadow-primary/20 border-0 active:scale-95 text-[11px] uppercase tracking-[0.2em] cursor-pointer">
+                            {% if user_review %}Yorumu Güncelle{% else %}Yorumu Gönder{% endif %}
                         </button>
                     </form>
+                </div>
                 {% else %}
-                    <div class="text-center py-3">
-                        <p class="text-muted">Yorum yapmak için giriş yapmalısınız.</p>
-                        <a href="{% url 'user_account' %}" class="btn btn-outline-primary rounded-pill px-4">Giriş Yap</a>
+                <div class="bg-slate-50 p-8 rounded-3xl text-center border-2 border-dashed border-slate-200">
+                    <p class="text-slate-500 font-medium mb-4 text-sm">Yorum yapmak için üye olmalısınız.</p>
+                    <a href="{% url 'user_account' %}" class="inline-block bg-white border border-slate-200 text-slate-900 font-bold px-8 py-3 rounded-full text-xs uppercase tracking-widest hover:bg-slate-900 hover:text-white transition-all text-decoration-none">Giriş Yap</a>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Review List -->
+            <div class="lg:col-span-8 space-y-6">
+                {% if reviews %}
+                    {% for review in reviews %}
+                    <div class="bg-white p-8 rounded-3xl border border-slate-100 shadow-lg shadow-slate-100/20 hover:shadow-xl transition-all duration-300">
+                        <div class="flex justify-between items-start mb-6">
+                            <div class="flex items-center gap-4">
+                                <div class="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center font-bold text-primary">
+                                    {{ review.user.username|make_list|first|upper }}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-900 text-sm">{{ review.user.first_name|default:review.user.username }}</div>
+                                    <div class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{{ review.created_at|date:"d F Y" }}</div>
+                                </div>
+                            </div>
+                            <div class="flex items-center text-warning">
+                                {% for i in "12345" %}
+                                    {% if forloop.counter <= review.rating %}
+                                        <span class="material-icons-round text-sm">star</span>
+                                    {% else %}
+                                        <span class="material-icons-round text-sm text-slate-200">star</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <p class="text-slate-600 text-sm leading-loose m-0 p-2">{{ review.comment }}</p>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-20 bg-slate-50 rounded-[3rem] border-2 border-dashed border-slate-200">
+                        <span class="material-icons-round text-5xl text-slate-200 mb-4">rate_review</span>
+                        <p class="text-slate-400 font-medium">Henüz yorum yapılmamış. İlk yorumu sen yap!</p>
                     </div>
                 {% endif %}
             </div>
         </div>
-
-        <!-- Yorumlar Listesi -->
-        <div class="col-md-8">
-            <h5 class="fw-bold mb-3">Yorumlar</h5>
-            {% if reviews %}
-                {% for review in reviews %}
-                <div class="card border-0 shadow-sm p-3 mb-3" style="border-radius: 15px;">
-                    <div class="d-flex justify-content-between align-items-center mb-2">
-                        <div class="fw-bold">{{ review.user.first_name|default:review.user.username }}</div>
-                        <div>
-                            {% for i in "12345" %}
-                                {% if forloop.counter <= review.rating %}
-                                    <i class="fa-solid fa-star text-warning small"></i>
-                                {% else %}
-                                    <i class="fa-regular fa-star text-warning small"></i>
-                                {% endif %}
-                            {% endfor %}
-                            <span class="text-muted small ms-1">{{ review.created_at|date:"d F Y" }}</span>
-                        </div>
-                    </div>
-                    <p class="text-secondary mb-0 small">{{ review.comment }}</p>
-                </div>
-                {% endfor %}
-            {% else %}
-                <div class="card border-0 shadow-sm p-4 text-center" style="border-radius: 15px;">
-                    <p class="text-muted mb-0">Henüz yorum yapılmamış. İlk yorumu sen yap!</p>
-                </div>
-            {% endif %}
-        </div>
     </div>
 </div>
+</main>
 {% endblock content %}
