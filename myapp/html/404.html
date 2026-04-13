@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Sayfa Bulunamadı | OnlineShop{% endblock %}
+
+{% block content %}
+<main class="pt-[70px] min-h-screen bg-white flex items-center justify-center px-4">
+    <div class="text-center max-w-lg mx-auto pt-4 pb-12">
+
+        <!-- Büyük 404 -->
+        <div class="relative inline-block mb-8">
+            <p class="text-[10rem] font-display font-black text-slate-100 leading-none select-none m-0">404</p>
+            <div class="absolute inset-0 flex items-center justify-center">
+                <div class="w-20 h-20 rounded-3xl bg-primary/10 flex items-center justify-center">
+                    <span class="material-icons-round text-primary text-4xl">search_off</span>
+                </div>
+            </div>
+        </div>
+
+        <h1 class="text-2xl font-display font-extrabold text-slate-900 mb-3">Sayfa Bulunamadı</h1>
+        <p class="text-slate-400 text-sm leading-relaxed mb-10">Aradığınız sayfa kaldırılmış, taşınmış ya da hiç var olmamış olabilir.</p>
+
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
+            <a href="{% url 'index' %}" class="inline-flex items-center justify-center gap-2 bg-primary hover:bg-blue-600 text-white font-bold px-8 py-3.5 rounded-2xl transition-all text-sm text-decoration-none active:scale-95 shadow-lg shadow-primary/20">
+                <span class="material-icons-round text-base">home</span> Ana Sayfaya Dön
+            </a>
+            <a href="javascript:history.back()" class="inline-flex items-center justify-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-8 py-3.5 rounded-2xl transition-all text-sm text-decoration-none active:scale-95">
+                <span class="material-icons-round text-base">arrow_back</span> Geri Git
+            </a>
+        </div>
+
+    </div>
+</main>
+{% endblock %}

@@ -165,7 +165,7 @@
                 <h2 class="text-3xl lg:text-4xl font-display font-extrabold text-slate-900 mb-3">Günün Fırsatları</h2>
                 <div class="w-12 h-1 bg-primary rounded-full"></div>
             </div>
-            <a class="text-slate-400 font-bold flex items-center gap-2 hover:text-primary transition-all text-decoration-none group text-xs uppercase tracking-widest" href="#">
+            <a class="text-slate-400 font-bold flex items-center gap-2 hover:text-primary transition-all text-decoration-none group text-xs uppercase tracking-widest" href="{% url 'category_list' categories.first.slug %}">
                 Tüm Koleksiyon <span class="material-icons-round text-sm group-hover:translate-x-1 transition-transform">east</span>
             </a>
         </div>
@@ -195,7 +195,6 @@
                     </div>
 
                     <div class="flex flex-col items-center gap-1">
-                        <span class="text-xs text-slate-300 line-through font-medium">{{ product.price|add:1500 }} TL</span>
                         <span class="text-xl font-display font-bold text-slate-900">
                             {{ product.price }} <span class="text-xs font-bold text-primary">TL</span>
                         </span>
