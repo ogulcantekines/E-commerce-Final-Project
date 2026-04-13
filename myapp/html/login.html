@@ -120,11 +120,6 @@
                     </div>
                 </div>
 
-                <!-- Trust Badges -->
-                <div class="mt-auto pt-10 flex items-center gap-8 opacity-40 grayscale hover:grayscale-0 transition-all hover:opacity-100">
-                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhieYPUH5yyvWogbiAuXMCn2qwn8VuOqzDXe9L7mYFAV6cQHPiX1KcQC-lUEPEEhjvL_it2Blsuf10exYNBpWBmKyEuQEuM-ojZ4OaXc8LO3vIH36yk0QqGPEJdR3RIi7m_3_ZN9Zk1zWB6I7knsuyYCy2AUMvWpZjsSDOHNKbFJ7jheHe7R7mS18qNVFjpGAPrf8PhCDw5-pdAlPNaakOl_rnLexZG_CN8wSONfWBnUgXTnD0ZbN7Y5ZTU4QAtpO_jDoRq2JzBds" class="h-3" alt="Mastercard" />
-                    <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuBNCyAcytEyltn1zAlCeKGxn7SufUkWzhhmcp-KBOIIqg05ACEJLjO_4ggHhIOKcGkBqJL5vfUBMQJMwn748iDpz-7LkmXuSWuUiQnmI_izzM9izbIbcX3zuYQpxg0Wpa4Y6EmxdsIa9Hfzq3gkPoyPJb7qFHKr2P1-rp_ul_UnHZqJIu6pwq518K68ly1kAa9FMRiYTh92XZHHfe52pWauZaikGZs0E6w4qa5H2tiRJEkI5YGJJT39cDeJ6JD5XIBwU8BT3ABEupE" class="h-3" alt="Visa" />
-                </div>
             </div>
         </div>
     </div>
@@ -141,6 +136,11 @@
 </style>
 
 <script>
+document.addEventListener('DOMContentLoaded', function() {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('tab') === 'register') switchTab('register');
+});
+
 function switchTab(tab) {
     const loginPanel = document.getElementById('login-panel');
     const registerPanel = document.getElementById('register-panel');

@@ -41,7 +41,7 @@
                 <li><a class="hover:text-white transition-colors text-decoration-none" href="{% url 'cart' %}">Sepetim</a></li>
                 {% else %}
                 <li><a class="hover:text-white transition-colors text-decoration-none" href="{% url 'user_account' %}">Giriş Yap</a></li>
-                <li><a class="hover:text-white transition-colors text-decoration-none" href="{% url 'user_account' %}">Üye Ol</a></li>
+                <li><a class="hover:text-white transition-colors text-decoration-none" href="{% url 'user_account' %}?tab=register">Üye Ol</a></li>
                 {% endif %}
             </ul>
         </div>

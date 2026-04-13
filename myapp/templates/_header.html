@@ -50,7 +50,7 @@
                         <a href="{% url 'logout' %}" class="block px-4 py-2.5 text-sm font-bold text-red-500 hover:bg-red-50 rounded-xl text-decoration-none transition-colors">Çıkış Yap</a>
                     {% else %}
                         <a href="{% url 'user_account' %}" class="block px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-primary rounded-xl text-decoration-none transition-colors">Giriş Yap</a>
-                        <a href="{% url 'user_account' %}" class="block px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-primary rounded-xl text-decoration-none transition-colors">Üye Ol</a>
+                        <a href="{% url 'user_account' %}?tab=register" class="block px-4 py-3 text-sm font-bold text-slate-700 hover:bg-slate-100 hover:text-primary rounded-xl text-decoration-none transition-colors">Üye Ol</a>
                     {% endif %}
                 </div>
             </div>
