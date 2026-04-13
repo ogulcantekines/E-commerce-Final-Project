@@ -32,4 +32,13 @@ urlpatterns = [
 
     path('profilim/', views.profile_view, name='profile'),
     path('urun/<slug:product_slug>/yorum/', views.add_review, name='add_review'),
+
+    # Favoriler
+    path('favorilerim/', views.favorites_view, name='favorites'),
+    path('favori/ekle/<int:product_id>/', views.toggle_favorite, name='toggle_favorite'),
+
+    # Karşılaştırma
+    path('karsilastir/', views.compare_view, name='compare'),
+    path('karsilastir/ekle/<int:product_id>/', views.add_to_compare, name='add_to_compare'),
+    path('karsilastir/cikar/<int:product_id>/', views.remove_from_compare, name='remove_from_compare'),
 ]

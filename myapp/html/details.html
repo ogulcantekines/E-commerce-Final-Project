@@ -79,9 +79,12 @@
                             <span class="material-icons-round group-hover:-translate-x-1 transition-transform">shopping_cart</span>
                             Sepete Ekle
                         </a>
-                        <button class="w-14 h-14 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-300 hover:text-red-500 hover:border-red-500 hover:bg-red-50 transition-all group border-0 bg-transparent active:scale-90">
-                            <span class="material-icons-round text-2xl group-hover:scale-110 transition-transform">favorite_border</span>
-                        </button>
+                        <a href="{% url 'toggle_favorite' product.id %}?next={{ request.path }}" class="w-14 h-14 rounded-2xl border-2 flex items-center justify-center transition-all group active:scale-90 text-decoration-none
+                            {% if is_favorite %}border-red-200 bg-red-50 text-red-500{% else %}border-slate-100 text-slate-300 hover:text-red-500 hover:border-red-500 hover:bg-red-50{% endif %}">
+                            <span class="material-icons-round text-2xl group-hover:scale-110 transition-transform">
+                                {% if is_favorite %}favorite{% else %}favorite_border{% endif %}
+                            </span>
+                        </a>
                     </div>
                 </div>
 
@@ -198,6 +201,60 @@
             </div>
         </div>
     </div>
+    <!-- Benzer Ürünler -->
+    {% if similar_products %}
+    <div class="mt-24">
+        <div class="flex items-baseline gap-4 mb-10">
+            <h2 class="text-2xl font-display font-black text-slate-900 m-0">Benzer Ürünler</h2>
+            <div class="flex-grow h-px bg-slate-100"></div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {% for p in similar_products %}
+            <a href="{% url 'product_detail' p.slug %}" class="text-decoration-none group">
+                <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="aspect-square bg-slate-50 rounded-2xl flex items-center justify-center p-4 mb-4 overflow-hidden">
+                        {% if p.image %}
+                        <img src="{{ p.image.url }}" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500">
+                        {% else %}
+                        <span class="material-icons-round text-slate-200 text-4xl">image_not_supported</span>
+                        {% endif %}
+                    </div>
+                    <h4 class="text-xs font-bold text-slate-800 m-0 line-clamp-2 group-hover:text-primary transition-colors">{{ p.name }}</h4>
+                    <p class="text-sm font-display font-black text-slate-900 mt-2 m-0">{{ p.price }} <span class="text-[10px] text-primary font-bold">TL</span></p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Son Görüntülenenler -->
+    {% if recent_products %}
+    <div class="mt-24">
+        <div class="flex items-baseline gap-4 mb-10">
+            <h2 class="text-2xl font-display font-black text-slate-900 m-0">Son Baktıklarınız</h2>
+            <div class="flex-grow h-px bg-slate-100"></div>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+            {% for p in recent_products %}
+            <a href="{% url 'product_detail' p.slug %}" class="text-decoration-none group">
+                <div class="bg-white rounded-3xl p-5 border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+                    <div class="aspect-square bg-slate-50 rounded-2xl flex items-center justify-center p-4 mb-4 overflow-hidden">
+                        {% if p.image %}
+                        <img src="{{ p.image.url }}" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500">
+                        {% else %}
+                        <span class="material-icons-round text-slate-200 text-4xl">image_not_supported</span>
+                        {% endif %}
+                    </div>
+                    <h4 class="text-xs font-bold text-slate-800 m-0 line-clamp-2 group-hover:text-primary transition-colors">{{ p.name }}</h4>
+                    <p class="text-sm font-display font-black text-slate-900 mt-2 m-0">{{ p.price }} <span class="text-[10px] text-primary font-bold">TL</span></p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 </main>
 {% endblock content %}

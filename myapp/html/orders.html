@@ -48,15 +48,29 @@
                             </div>
                             <div class="text-center md:text-left">
                                 <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Durum</p>
-                                <span class="inline-flex items-center px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100">
-                                    Hazırlanıyor
+                                {% if order.status == 'teslim_edildi' %}
+                                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-green-50 text-green-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-green-100">
+                                    <span class="material-icons-round text-xs">check_circle</span> Teslim Edildi
                                 </span>
+                                {% elif order.status == 'yolda' %}
+                                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-amber-50 text-amber-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-amber-100">
+                                    <span class="material-icons-round text-xs">directions_run</span> Yolda
+                                </span>
+                                {% elif order.status == 'kargoya_verildi' %}
+                                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-violet-50 text-violet-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-violet-100">
+                                    <span class="material-icons-round text-xs">local_shipping</span> Kargoya Verildi
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center gap-1.5 px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[10px] font-black uppercase tracking-widest border border-blue-100">
+                                    <span class="material-icons-round text-xs">inventory_2</span> Hazırlanıyor
+                                </span>
+                                {% endif %}
                             </div>
                         </div>
 
                         <!-- Action -->
                         <div class="w-full lg:w-auto">
-                            <a href="{% url 'order_detail' order.id %}" class="block text-center px-8 py-3.5 bg-slate-900 hover:bg-black text-white font-bold rounded-2xl transition-all shadow-lg active:scale-95 text-[11px] uppercase tracking-[0.2em] text-decoration-none">
+                            <a href="{% url 'order_detail' order.id %}" class="block text-center px-8 py-3.5 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-lg shadow-primary/20 active:scale-95 text-[11px] uppercase tracking-[0.2em] text-decoration-none">
                                 Detayları İncele
                             </a>
                         </div>

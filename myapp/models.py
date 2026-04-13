@@ -69,11 +69,19 @@ class UserProfile(models.Model):
 
 # 5. SİPARİŞ MODELİ
 class Order(models.Model):
+    STATUS_CHOICES = [
+        ('hazirlaniyor', 'Hazırlanıyor'),
+        ('kargoya_verildi', 'Kargoya Verildi'),
+        ('yolda', 'Yolda'),
+        ('teslim_edildi', 'Teslim Edildi'),
+    ]
+
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Müşteri")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Sipariş Tarihi")
     total_price = models.DecimalField(max_digits=10, decimal_places=2, default=0.00, null=True, blank=True, verbose_name="Toplam Tutar")
     is_completed = models.BooleanField(default=False, verbose_name="Ödeme Tamamlandı mı?")
-    
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='hazirlaniyor', verbose_name="Sipariş Durumu")
+
     # Sipariş anındaki iletişim bilgileri
     phone = models.CharField(max_length=15, verbose_name="Siparişteki Telefon", null=True, blank=True)
     city = models.CharField(max_length=50, verbose_name="Siparişteki Şehir", null=True, blank=True)
@@ -84,7 +92,7 @@ class Order(models.Model):
 
 # 6. SİPARİŞ KALEMLERİ MODELİ
 class OrderItem(models.Model):
-    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True, verbose_name="Ürün")
     product_name = models.CharField(max_length=200, null=True, blank=True, verbose_name="Satın Alınan Ürün Adı")
     quantity = models.PositiveIntegerField(default=1, verbose_name="Adet")
@@ -107,6 +115,18 @@ class Review(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name} ({self.rating}/5)"
+
+# 8. FAVORİ MODELİ
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Kullanıcı")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='favorites', verbose_name="Ürün")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+
+    def __str__(self):
+        return f"{self.user.username} → {self.product.name}"
 
 # --- OTOMATİK PROFİL SİNYALLERİ ---
 

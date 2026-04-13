@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
 from decimal import Decimal
-from .models import Category, Product, Slider, Order, OrderItem, UserProfile, Review
+from .models import Category, Product, Slider, Order, OrderItem, UserProfile, Review, Favorite
 
 # --- ANA SAYFA ---
 def index(request):
@@ -44,7 +44,8 @@ def category_list(request, category_slug):
         del query_params['page']
     query_string = query_params.urlencode()
 
-    return render(request, "list.html", {'categories': categories, 'products': products, 'category': category, 'available_brands': available_brands, 'query_string': query_string})
+    compare_ids = request.session.get('compare', [])
+    return render(request, "list.html", {'categories': categories, 'products': products, 'category': category, 'available_brands': available_brands, 'query_string': query_string, 'compare_ids': compare_ids})
 
 def product_detail(request, product_slug):
     categories = Category.objects.all()
@@ -52,11 +53,25 @@ def product_detail(request, product_slug):
     reviews = product.reviews.select_related('user').order_by('-created_at')
     user_review = reviews.filter(user=request.user).first() if request.user.is_authenticated else None
     avg_rating = round(sum(r.rating for r in reviews) / reviews.count(), 1) if reviews.count() > 0 else None
+
+    # Son görüntülenenler
+    recently_viewed = request.session.get('recently_viewed', [])
+    if product.id in recently_viewed:
+        recently_viewed.remove(product.id)
+    recently_viewed.insert(0, product.id)
+    request.session['recently_viewed'] = recently_viewed[:5]
+    recent_products = Product.objects.filter(id__in=recently_viewed[1:5]).exclude(id=product.id)
+    similar_products = Product.objects.filter(category=product.category).exclude(id=product.id).order_by('?')[:4]
+    is_favorite = Favorite.objects.filter(user=request.user, product=product).exists() if request.user.is_authenticated else False
+
     return render(request, "details.html", {
         'categories': categories,
         'product': product,
         'reviews': reviews,
         'user_review': user_review,
+        'recent_products': recent_products,
+        'similar_products': similar_products,
+        'is_favorite': is_favorite,
         'avg_rating': avg_rating,
     })
 
@@ -170,7 +185,8 @@ def search(request):
         del query_params['page']
     query_string = query_params.urlencode()
 
-    return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories, 'available_brands': available_brands, 'query_string': query_string})
+    compare_ids = request.session.get('compare', [])
+    return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories, 'available_brands': available_brands, 'query_string': query_string, 'compare_ids': compare_ids})
 
 # --- ÖDEME VE PROFİL ---
 @login_required
@@ -260,6 +276,54 @@ def add_review(request, product_slug):
         except ValueError:
             messages.error(request, 'Geçersiz puan değeri.')
     return redirect('product_detail', product_slug=product_slug)
+
+# --- FAVORİLER ---
+@login_required
+def toggle_favorite(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
+    if not created:
+        favorite.delete()
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
+    return redirect(next_url)
+
+@login_required
+def favorites_view(request):
+    favorites = Favorite.objects.filter(user=request.user).select_related('product').order_by('-created_at')
+    return render(request, 'favorites.html', {'favorites': favorites})
+
+# --- KARŞILAŞTIRMA ---
+def add_to_compare(request, product_id):
+    compare = request.session.get('compare', [])
+    if product_id not in compare:
+        if len(compare) >= 2:
+            compare.pop(0)
+        compare.append(product_id)
+    request.session['compare'] = compare
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
+    return redirect(next_url)
+
+def remove_from_compare(request, product_id):
+    compare = request.session.get('compare', [])
+    if product_id in compare:
+        compare.remove(product_id)
+    request.session['compare'] = compare
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
+    return redirect(next_url)
+
+def compare_view(request):
+    compare_ids = request.session.get('compare', [])
+    products = list(Product.objects.filter(id__in=compare_ids))
+    rows = []
+    if len(products) == 2:
+        p1, p2 = products[0], products[1]
+        rows = [
+            {'label': 'Kategori',  'val1': p1.category.name if p1.category else '—', 'val2': p2.category.name if p2.category else '—'},
+            {'label': 'Marka',     'val1': p1.brand or '—',   'val2': p2.brand or '—'},
+            {'label': 'Fiyat',     'val1': f"{p1.price} TL",  'val2': f"{p2.price} TL"},
+            {'label': 'Stok',      'val1': p1.stock,           'val2': p2.stock},
+        ]
+    return render(request, 'compare.html', {'products': products, 'rows': rows})
 
 @login_required
 def order_detail(request, order_id):

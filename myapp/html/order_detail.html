@@ -5,8 +5,9 @@
 
 {% block content %}
 <main class="min-h-screen bg-[#fdfdfd] pt-12 pb-20 px-4">
-    <div class="max-w-4xl mx-auto">
-        <!-- Header & Breadcrumbs -->
+    <div class="max-w-3xl mx-auto">
+
+        <!-- Header -->
         <div class="flex flex-col md:flex-row items-center justify-between mb-10 gap-6">
             <div>
                 <nav class="flex mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400" aria-label="Breadcrumb">
@@ -14,63 +15,123 @@
                     <span class="mr-2">/</span>
                     <a href="{% url 'orders' %}" class="hover:text-primary transition-colors text-decoration-none mr-2">Siparişlerim</a>
                     <span class="mr-2">/</span>
-                    <span class="text-primary">Detay #{{ order.id }}</span>
+                    <span class="text-primary">#{{ order.id }}</span>
                 </nav>
                 <h1 class="text-3xl font-display font-black tracking-tight text-slate-900 m-0">Sipariş Detayı</h1>
             </div>
-            <a href="{% url 'orders' %}" class="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary hover:border-primary hover:shadow-lg transition-all text-decoration-none group">
+            <a href="{% url 'orders' %}" class="flex items-center gap-2 px-6 py-2.5 bg-white border border-slate-100 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:text-primary hover:border-primary transition-all text-decoration-none group">
                 <span class="material-icons-round text-sm group-hover:-translate-x-1 transition-transform">arrow_back</span>
                 Siparişlerime Dön
             </a>
         </div>
 
         <div class="bg-white rounded-[2.5rem] shadow-[0_32px_100px_-20px_rgba(0,0,0,0.08)] border border-slate-100/60 overflow-hidden">
-            <!-- Quick Summary Bar -->
-            <div class="p-8 md:p-10 bg-slate-50 border-b border-slate-100 grid grid-cols-2 md:grid-cols-4 gap-8">
-                <div class="text-center md:text-left">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Sipari No</p>
+
+            <!-- Özet Bar -->
+            <div class="p-8 bg-slate-50 border-b border-slate-100 grid grid-cols-3 gap-6">
+                <div>
+                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Sipariş No</p>
                     <p class="text-lg font-black text-slate-900 m-0">#{{ order.id }}</p>
                 </div>
-                <div class="text-center md:text-left border-l border-slate-100 pl-8">
+                <div class="border-l border-slate-200 pl-6">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Tarih</p>
                     <p class="text-sm font-bold text-slate-900 m-0">{{ order.created_at|date:"d F Y" }}</p>
                 </div>
-                <div class="text-center md:text-left border-l border-slate-100 pl-8">
+                <div class="border-l border-slate-200 pl-6">
                     <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Toplam</p>
                     <p class="text-lg font-display font-black text-primary m-0">{{ order.total_price }} <span class="text-xs">TL</span></p>
                 </div>
-                <div class="text-center md:text-left border-l border-slate-100 pl-8">
-                    <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Durum</p>
-                    <span class="inline-flex items-center px-4 py-1.5 bg-blue-50 text-blue-600 rounded-full text-[9px] font-black uppercase tracking-widest border border-blue-100">
-                        Hazırlanıyor
-                    </span>
-                </div>
             </div>
 
-            <!-- Items List -->
-            <div class="p-8 md:p-12">
-                <h3 class="text-xs font-black uppercase tracking-[0.2em] text-slate-400 mb-8 ml-2">Siparişteki Ürünler</h3>
-                <div class="space-y-6">
+            <!-- Kargo Takip Adımları -->
+            <div class="p-8 md:p-10 border-b border-slate-100">
+                <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-8">Sipariş Durumu</p>
+
+                {% with status=order.status %}
+                <div class="relative flex items-start justify-between">
+
+                    <!-- Bağlantı çizgisi -->
+                    <div class="absolute top-5 left-0 right-0 h-0.5 bg-slate-100 z-0" style="margin: 0 40px;"></div>
+                    <div class="absolute top-5 left-0 h-0.5 z-0 bg-primary transition-all duration-700"
+                        style="margin-left: 40px;
+                        {% if status == 'hazirlaniyor' %}width: 0%;
+                        {% elif status == 'kargoya_verildi' %}width: calc(33% - 0px);
+                        {% elif status == 'yolda' %}width: calc(66% - 0px);
+                        {% else %}width: calc(100% - 80px);{% endif %}">
+                    </div>
+
+                    <!-- Adım 1: Hazırlanıyor -->
+                    <div class="flex flex-col items-center gap-3 z-10 w-1/4">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all
+                            {% if status == 'hazirlaniyor' or status == 'kargoya_verildi' or status == 'yolda' or status == 'teslim_edildi' %}bg-primary border-primary{% else %}bg-white border-slate-200{% endif %}">
+                            <span class="material-icons-round text-sm {% if status == 'hazirlaniyor' or status == 'kargoya_verildi' or status == 'yolda' or status == 'teslim_edildi' %}text-white{% else %}text-slate-300{% endif %}">inventory_2</span>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] font-black uppercase tracking-wider m-0 {% if status == 'hazirlaniyor' %}text-primary{% else %}text-slate-400{% endif %}">Hazırlanıyor</p>
+                        </div>
+                    </div>
+
+                    <!-- Adım 2: Kargoya Verildi -->
+                    <div class="flex flex-col items-center gap-3 z-10 w-1/4">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all
+                            {% if status == 'kargoya_verildi' or status == 'yolda' or status == 'teslim_edildi' %}bg-primary border-primary{% else %}bg-white border-slate-200{% endif %}">
+                            <span class="material-icons-round text-sm {% if status == 'kargoya_verildi' or status == 'yolda' or status == 'teslim_edildi' %}text-white{% else %}text-slate-300{% endif %}">local_shipping</span>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] font-black uppercase tracking-wider m-0 {% if status == 'kargoya_verildi' %}text-primary{% else %}text-slate-400{% endif %}">Kargoya Verildi</p>
+                        </div>
+                    </div>
+
+                    <!-- Adım 3: Yolda -->
+                    <div class="flex flex-col items-center gap-3 z-10 w-1/4">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all
+                            {% if status == 'yolda' or status == 'teslim_edildi' %}bg-primary border-primary{% else %}bg-white border-slate-200{% endif %}">
+                            <span class="material-icons-round text-sm {% if status == 'yolda' or status == 'teslim_edildi' %}text-white{% else %}text-slate-300{% endif %}">directions_run</span>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] font-black uppercase tracking-wider m-0 {% if status == 'yolda' %}text-primary{% else %}text-slate-400{% endif %}">Yolda</p>
+                        </div>
+                    </div>
+
+                    <!-- Adım 4: Teslim Edildi -->
+                    <div class="flex flex-col items-center gap-3 z-10 w-1/4">
+                        <div class="w-10 h-10 rounded-full flex items-center justify-center border-2 transition-all
+                            {% if status == 'teslim_edildi' %}bg-green-500 border-green-500{% else %}bg-white border-slate-200{% endif %}">
+                            <span class="material-icons-round text-sm {% if status == 'teslim_edildi' %}text-white{% else %}text-slate-300{% endif %}">check_circle</span>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-[10px] font-black uppercase tracking-wider m-0 {% if status == 'teslim_edildi' %}text-green-500{% else %}text-slate-400{% endif %}">Teslim Edildi</p>
+                        </div>
+                    </div>
+
+                </div>
+                {% endwith %}
+            </div>
+
+            <!-- Ürünler -->
+            <div class="p-8 md:p-10">
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6">Siparişteki Ürünler</p>
+                <div class="space-y-4">
                     {% for item in order.items.all %}
-                    <div class="flex flex-col sm:flex-row items-center gap-6 p-6 bg-slate-50/50 rounded-3xl border border-slate-100 group hover:border-primary/20 hover:bg-white hover:shadow-xl transition-all duration-500">
-                        <div class="w-20 h-20 bg-white rounded-2xl p-2 shrink-0 flex items-center justify-center overflow-hidden shadow-sm">
+                    <div class="flex items-center gap-5 p-5 bg-slate-50/50 rounded-2xl border border-slate-100 group hover:border-primary/20 hover:bg-white hover:shadow-lg transition-all duration-300">
+                        <div class="w-16 h-16 bg-white rounded-xl p-2 shrink-0 flex items-center justify-center shadow-sm">
                             {% if item.product and item.product.image %}
-                                <img src="{{ item.product.image.url }}" class="w-full h-full object-contain group-hover:scale-110 transition-transform duration-500">
+                                <img src="{{ item.product.image.url }}" class="w-full h-full object-contain">
                             {% else %}
                                 <span class="material-icons-round text-slate-200">image_not_supported</span>
                             {% endif %}
                         </div>
-                        <div class="flex-grow text-center sm:text-left">
-                            <h4 class="text-sm font-bold text-slate-900 mb-1">{{ item.product_name|default:item.product.name }}</h4>
-                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest m-0">{{ item.product.brand|default:"OnlineShop Select" }}</p>
+                        <div class="flex-grow">
+                            <h4 class="text-sm font-bold text-slate-900 mb-0.5">{{ item.product_name|default:item.product.name }}</h4>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest m-0">{{ item.product.brand|default:"OnlineShop" }}</p>
                         </div>
-                        <div class="flex items-center gap-12 shrink-0">
+                        <div class="flex items-center gap-8 shrink-0">
                             <div class="text-center">
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Adet</p>
+                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Adet</p>
                                 <p class="text-sm font-black text-slate-900 m-0">{{ item.quantity }}</p>
                             </div>
                             <div class="text-right">
-                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Tutar</p>
+                                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Tutar</p>
                                 <p class="text-base font-black text-slate-900 m-0">{{ item.price|floatformat:2 }} <span class="text-[10px] text-primary">TL</span></p>
                             </div>
                         </div>
@@ -79,46 +140,47 @@
                 </div>
             </div>
 
-            <!-- Delivery Info Section -->
-            <div class="p-8 md:p-12 bg-slate-50/30 border-t border-slate-100">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    <div class="flex gap-4">
-                        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-slate-400 shrink-0">
-                            <span class="material-icons-round text-lg">smartphone</span>
+            <!-- Teslimat Bilgileri -->
+            <div class="px-8 md:px-10 pb-8 pt-2 bg-slate-50/30 border-t border-slate-100">
+                <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-6 pt-8">Teslimat Bilgileri</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="flex gap-3">
+                        <div class="w-9 h-9 bg-white rounded-xl shadow-sm flex items-center justify-center text-slate-400 shrink-0">
+                            <span class="material-icons-round text-base">smartphone</span>
                         </div>
                         <div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Telefon</p>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Telefon</p>
                             <p class="text-xs font-bold text-slate-900 m-0">{{ order.phone|default:"-" }}</p>
                         </div>
                     </div>
-                    <div class="flex gap-4">
-                        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-slate-400 shrink-0">
-                            <span class="material-icons-round text-lg">location_city</span>
+                    <div class="flex gap-3">
+                        <div class="w-9 h-9 bg-white rounded-xl shadow-sm flex items-center justify-center text-slate-400 shrink-0">
+                            <span class="material-icons-round text-base">location_city</span>
                         </div>
                         <div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Şehir</p>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Şehir</p>
                             <p class="text-xs font-bold text-slate-900 m-0">{{ order.city|default:"-" }}</p>
                         </div>
                     </div>
-                    <div class="flex gap-4">
-                        <div class="w-10 h-10 bg-white rounded-xl shadow-sm flex items-center justify-center text-slate-400 shrink-0">
-                            <span class="material-icons-round text-lg">place</span>
+                    <div class="flex gap-3">
+                        <div class="w-9 h-9 bg-white rounded-xl shadow-sm flex items-center justify-center text-slate-400 shrink-0">
+                            <span class="material-icons-round text-base">place</span>
                         </div>
                         <div>
-                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Teslimat Adresi</p>
+                            <p class="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Adres</p>
                             <p class="text-xs font-bold text-slate-900 m-0 leading-relaxed">{{ order.address|default:"-" }}</p>
                         </div>
                     </div>
                 </div>
             </div>
-            
-            <!-- Footer Action -->
-            <div class="p-10 text-center border-t border-slate-50">
-                <p class="text-[10px] font-bold text-slate-400 mb-6 italic">* Siparişiniz kargoya verildiğinde SMS ile bilgilendirileceksiniz.</p>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="{% url 'index' %}" class="px-10 py-3 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/20 text-[10px] uppercase tracking-widest text-decoration-none">Alışverişe Devam Et</a>
-                </div>
+
+            <!-- Footer -->
+            <div class="p-8 text-center border-t border-slate-50">
+                <a href="{% url 'index' %}" class="inline-flex items-center gap-2 px-10 py-3 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl transition-all shadow-xl shadow-primary/20 text-[10px] uppercase tracking-widest text-decoration-none">
+                    <span class="material-icons-round text-sm">shopping_bag</span> Alışverişe Devam Et
+                </a>
             </div>
+
         </div>
     </div>
 </main>

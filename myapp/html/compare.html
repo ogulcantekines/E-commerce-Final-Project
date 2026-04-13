@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Ürün Karşılaştırma | OnlineShop{% endblock %}
+
+{% block content %}
+<main class="pt-[70px] min-h-screen bg-[#fdfdfd] pb-20">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+        <!-- Header -->
+        <div class="mb-12">
+            <nav class="flex mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                <a href="{% url 'index' %}" class="hover:text-primary transition-colors text-decoration-none mr-2">OnlineShop</a>
+                <span class="mr-2">/</span>
+                <span class="text-primary">Karşılaştırma</span>
+            </nav>
+            <h1 class="text-3xl font-display font-black text-slate-900 m-0">Ürün Karşılaştırma</h1>
+        </div>
+
+        {% if products|length == 2 %}
+        {% with p1=products.0 p2=products.1 %}
+
+        <!-- Ürün Başlıkları -->
+        <div class="grid grid-cols-3 gap-6 mb-6">
+            <div></div>
+            {% for product in products %}
+            <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-100 text-center relative">
+                <a href="{% url 'remove_from_compare' product.id %}?next={% url 'compare' %}" class="absolute top-3 right-3 w-7 h-7 rounded-full bg-slate-100 hover:bg-red-100 hover:text-red-500 flex items-center justify-center transition-colors text-slate-400 text-decoration-none">
+                    <span class="material-icons-round text-sm">close</span>
+                </a>
+                {% if product.image %}
+                <img src="{{ product.image.url }}" class="w-24 h-24 object-contain mx-auto mb-4">
+                {% endif %}
+                <h3 class="text-sm font-bold text-slate-900 m-0 leading-tight">{{ product.name }}</h3>
+                <p class="text-xl font-display font-black text-primary mt-2 m-0">{{ product.price }} <span class="text-xs">TL</span></p>
+                <a href="{% url 'add_to_cart' product.id %}" class="mt-4 block py-2.5 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl text-[10px] uppercase tracking-widest transition-all text-decoration-none active:scale-95 shadow-lg shadow-primary/20">
+                    Sepete Ekle
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Karşılaştırma Satırları -->
+        <div class="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+
+            {% for row in rows %}
+            <div class="grid grid-cols-3 gap-0 {% if not forloop.last %}border-b border-slate-50{% endif %} hover:bg-slate-50/50 transition-colors">
+                <div class="px-8 py-5 flex items-center">
+                    <span class="text-[10px] font-black uppercase tracking-widest text-slate-400">{{ row.label }}</span>
+                </div>
+                <div class="px-8 py-5 flex items-center border-l border-slate-50">
+                    <span class="text-sm font-bold text-slate-800">{{ row.val1|default:"—" }}</span>
+                </div>
+                <div class="px-8 py-5 flex items-center border-l border-slate-50">
+                    <span class="text-sm font-bold text-slate-800">{{ row.val2|default:"—" }}</span>
+                </div>
+            </div>
+            {% endfor %}
+
+        </div>
+
+        {% endwith %}
+
+        {% else %}
+        <!-- Yetersiz ürün -->
+        <div class="bg-white rounded-[3rem] border-2 border-dashed border-slate-100 p-20 text-center">
+            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-200">
+                <span class="material-icons-round text-5xl">compare_arrows</span>
+            </div>
+            <h2 class="text-xl font-black text-slate-900 mb-3">Karşılaştırmak için 2 ürün seçin</h2>
+            <p class="text-slate-400 text-sm mb-8">Kategori sayfasından 2 ürün seçip karşılaştırabilirsiniz.</p>
+            <a href="{% url 'index' %}" class="inline-flex items-center gap-2 px-8 py-3.5 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl transition-all text-sm text-decoration-none shadow-lg shadow-primary/20">
+                <span class="material-icons-round text-base">arrow_back</span> Ürünlere Dön
+            </a>
+        </div>
+        {% endif %}
+
+    </div>
+</main>
+{% endblock %}
