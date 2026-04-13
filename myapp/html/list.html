@@ -130,6 +130,15 @@
                             <a href="{% url 'product_detail' product.slug %}" class="flex-grow text-center py-3 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl text-[10px] uppercase tracking-widest transition-all text-decoration-none active:scale-[0.98]">
                                 İncele
                             </a>
+                            {% if product.id in compare_ids %}
+                            <a href="{% url 'remove_from_compare' product.id %}?next={{ request.get_full_path }}" class="w-12 h-12 bg-primary text-white flex items-center justify-center rounded-2xl transition-all shadow-lg shadow-primary/20 active:scale-[0.95] text-decoration-none" title="Karşılaştırmadan Çıkar">
+                                <span class="material-icons-round text-xl">compare_arrows</span>
+                            </a>
+                            {% else %}
+                            <a href="{% url 'add_to_compare' product.id %}?next={{ request.get_full_path }}" class="w-12 h-12 bg-slate-100 hover:bg-slate-200 text-slate-500 flex items-center justify-center rounded-2xl transition-all active:scale-[0.95] text-decoration-none" title="Karşılaştırmaya Ekle">
+                                <span class="material-icons-round text-xl">compare_arrows</span>
+                            </a>
+                            {% endif %}
                             <a href="{% url 'add_to_cart' product.id %}" class="w-12 h-12 bg-primary hover:bg-blue-600 text-white flex items-center justify-center rounded-2xl transition-all shadow-lg shadow-primary/20 active:scale-[0.95] text-decoration-none">
                                 <span class="material-icons-round text-xl">shopping_cart</span>
                             </a>
@@ -178,6 +187,30 @@
         </div>
     </div>
 </main>
+
+<!-- Karşılaştırma Barı -->
+{% if compare_ids %}
+<div class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
+    <div class="bg-slate-900 rounded-2xl px-6 py-4 flex items-center gap-6 shadow-2xl border border-white/10">
+        <div class="flex items-center gap-3">
+            <span class="material-icons-round text-primary">compare_arrows</span>
+            <span class="text-white text-sm font-bold">{{ compare_ids|length }} ürün seçildi</span>
+        </div>
+        {% if compare_ids|length == 2 %}
+        <a href="{% url 'compare' %}" class="px-6 py-2.5 bg-primary hover:bg-blue-500 text-white font-bold rounded-xl text-xs uppercase tracking-widest transition-all text-decoration-none active:scale-95">
+            Karşılaştır
+        </a>
+        {% else %}
+        <span class="px-6 py-2.5 bg-white/10 text-white/50 font-bold rounded-xl text-xs uppercase tracking-widest">
+            1 ürün daha seç
+        </span>
+        {% endif %}
+        <a href="{% url 'remove_from_compare' compare_ids.0 %}?next={{ request.get_full_path }}" class="text-white/40 hover:text-white transition-colors text-decoration-none">
+            <span class="material-icons-round text-lg">close</span>
+        </a>
+    </div>
+</div>
+{% endif %}
 
 <style>
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }

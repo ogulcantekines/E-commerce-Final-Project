@@ -44,7 +44,8 @@ def category_list(request, category_slug):
         del query_params['page']
     query_string = query_params.urlencode()
 
-    return render(request, "list.html", {'categories': categories, 'products': products, 'category': category, 'available_brands': available_brands, 'query_string': query_string})
+    compare_ids = request.session.get('compare', [])
+    return render(request, "list.html", {'categories': categories, 'products': products, 'category': category, 'available_brands': available_brands, 'query_string': query_string, 'compare_ids': compare_ids})
 
 def product_detail(request, product_slug):
     categories = Category.objects.all()
@@ -170,7 +171,8 @@ def search(request):
         del query_params['page']
     query_string = query_params.urlencode()
 
-    return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories, 'available_brands': available_brands, 'query_string': query_string})
+    compare_ids = request.session.get('compare', [])
+    return render(request, 'list.html', {'products': products, 'query': query, 'categories': categories, 'available_brands': available_brands, 'query_string': query_string, 'compare_ids': compare_ids})
 
 # --- ÖDEME VE PROFİL ---
 @login_required
@@ -260,6 +262,39 @@ def add_review(request, product_slug):
         except ValueError:
             messages.error(request, 'Geçersiz puan değeri.')
     return redirect('product_detail', product_slug=product_slug)
+
+# --- KARŞILAŞTIRMA ---
+def add_to_compare(request, product_id):
+    compare = request.session.get('compare', [])
+    if product_id not in compare:
+        if len(compare) >= 2:
+            compare.pop(0)
+        compare.append(product_id)
+    request.session['compare'] = compare
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
+    return redirect(next_url)
+
+def remove_from_compare(request, product_id):
+    compare = request.session.get('compare', [])
+    if product_id in compare:
+        compare.remove(product_id)
+    request.session['compare'] = compare
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
+    return redirect(next_url)
+
+def compare_view(request):
+    compare_ids = request.session.get('compare', [])
+    products = list(Product.objects.filter(id__in=compare_ids))
+    rows = []
+    if len(products) == 2:
+        p1, p2 = products[0], products[1]
+        rows = [
+            {'label': 'Kategori',  'val1': p1.category.name if p1.category else '—', 'val2': p2.category.name if p2.category else '—'},
+            {'label': 'Marka',     'val1': p1.brand or '—',   'val2': p2.brand or '—'},
+            {'label': 'Fiyat',     'val1': f"{p1.price} TL",  'val2': f"{p2.price} TL"},
+            {'label': 'Stok',      'val1': p1.stock,           'val2': p2.stock},
+        ]
+    return render(request, 'compare.html', {'products': products, 'rows': rows})
 
 @login_required
 def order_detail(request, order_id):
