@@ -53,11 +53,23 @@ def product_detail(request, product_slug):
     reviews = product.reviews.select_related('user').order_by('-created_at')
     user_review = reviews.filter(user=request.user).first() if request.user.is_authenticated else None
     avg_rating = round(sum(r.rating for r in reviews) / reviews.count(), 1) if reviews.count() > 0 else None
+
+    # Son görüntülenenler
+    recently_viewed = request.session.get('recently_viewed', [])
+    if product.id in recently_viewed:
+        recently_viewed.remove(product.id)
+    recently_viewed.insert(0, product.id)
+    request.session['recently_viewed'] = recently_viewed[:5]
+    recent_products = Product.objects.filter(id__in=recently_viewed[1:5]).exclude(id=product.id)
+    similar_products = Product.objects.filter(category=product.category).exclude(id=product.id).order_by('?')[:4]
+
     return render(request, "details.html", {
         'categories': categories,
         'product': product,
         'reviews': reviews,
         'user_review': user_review,
+        'recent_products': recent_products,
+        'similar_products': similar_products,
         'avg_rating': avg_rating,
     })
 
