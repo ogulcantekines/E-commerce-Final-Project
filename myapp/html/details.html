@@ -79,9 +79,12 @@
                             <span class="material-icons-round group-hover:-translate-x-1 transition-transform">shopping_cart</span>
                             Sepete Ekle
                         </a>
-                        <button class="w-14 h-14 rounded-2xl border-2 border-slate-100 flex items-center justify-center text-slate-300 hover:text-red-500 hover:border-red-500 hover:bg-red-50 transition-all group border-0 bg-transparent active:scale-90">
-                            <span class="material-icons-round text-2xl group-hover:scale-110 transition-transform">favorite_border</span>
-                        </button>
+                        <a href="{% url 'toggle_favorite' product.id %}?next={{ request.path }}" class="w-14 h-14 rounded-2xl border-2 flex items-center justify-center transition-all group active:scale-90 text-decoration-none
+                            {% if is_favorite %}border-red-200 bg-red-50 text-red-500{% else %}border-slate-100 text-slate-300 hover:text-red-500 hover:border-red-500 hover:bg-red-50{% endif %}">
+                            <span class="material-icons-round text-2xl group-hover:scale-110 transition-transform">
+                                {% if is_favorite %}favorite{% else %}favorite_border{% endif %}
+                            </span>
+                        </a>
                     </div>
                 </div>
 

@@ -116,6 +116,18 @@ class Review(models.Model):
     def __str__(self):
         return f"{self.user.username} - {self.product.name} ({self.rating}/5)"
 
+# 8. FAVORİ MODELİ
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Kullanıcı")
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='favorites', verbose_name="Ürün")
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('user', 'product')
+
+    def __str__(self):
+        return f"{self.user.username} → {self.product.name}"
+
 # --- OTOMATİK PROFİL SİNYALLERİ ---
 
 @receiver(post_save, sender=User)

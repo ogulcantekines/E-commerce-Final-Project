@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
 from decimal import Decimal
-from .models import Category, Product, Slider, Order, OrderItem, UserProfile, Review
+from .models import Category, Product, Slider, Order, OrderItem, UserProfile, Review, Favorite
 
 # --- ANA SAYFA ---
 def index(request):
@@ -62,6 +62,7 @@ def product_detail(request, product_slug):
     request.session['recently_viewed'] = recently_viewed[:5]
     recent_products = Product.objects.filter(id__in=recently_viewed[1:5]).exclude(id=product.id)
     similar_products = Product.objects.filter(category=product.category).exclude(id=product.id).order_by('?')[:4]
+    is_favorite = Favorite.objects.filter(user=request.user, product=product).exists() if request.user.is_authenticated else False
 
     return render(request, "details.html", {
         'categories': categories,
@@ -70,6 +71,7 @@ def product_detail(request, product_slug):
         'user_review': user_review,
         'recent_products': recent_products,
         'similar_products': similar_products,
+        'is_favorite': is_favorite,
         'avg_rating': avg_rating,
     })
 
@@ -274,6 +276,21 @@ def add_review(request, product_slug):
         except ValueError:
             messages.error(request, 'Geçersiz puan değeri.')
     return redirect('product_detail', product_slug=product_slug)
+
+# --- FAVORİLER ---
+@login_required
+def toggle_favorite(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+    favorite, created = Favorite.objects.get_or_create(user=request.user, product=product)
+    if not created:
+        favorite.delete()
+    next_url = request.GET.get('next', request.META.get('HTTP_REFERER', '/'))
+    return redirect(next_url)
+
+@login_required
+def favorites_view(request):
+    favorites = Favorite.objects.filter(user=request.user).select_related('product').order_by('-created_at')
+    return render(request, 'favorites.html', {'favorites': favorites})
 
 # --- KARŞILAŞTIRMA ---
 def add_to_compare(request, product_id):
