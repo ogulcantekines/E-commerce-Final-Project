@@ -65,7 +65,7 @@
         </div>
     {% endfor %}
 {% endif %}
-    <div class="flex-grow-1">
+    <div class="flex-grow-1 page-content">
         {% block content %}{% endblock %}
     </div>
 
@@ -74,6 +74,14 @@
     {% block extra_js %}{% endblock %}
        <script src="{% static 'css/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
         <script src="{% static 'js/script.js' %}"></script>
+
+<style>
+    .page-content { animation: pageFadeIn 0.3s ease-out; }
+    @keyframes pageFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+</style>
 
 </body>
 </html>

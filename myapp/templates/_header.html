@@ -11,7 +11,7 @@
     <div class="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
         <a class="text-[13px] font-bold tracking-widest uppercase font-manrope text-decoration-none transition-all hover:text-primary {% if request.path == '/' %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-500 hover:opacity-80{% endif %}" href="{% url 'index' %}">Ana Sayfa</a>
         {% for cat in categories %}
-            <a class="text-[13px] font-bold tracking-widest uppercase font-manrope text-decoration-none transition-all hover:text-primary text-slate-500 hover:opacity-80" href="{% url 'category_list' cat.slug %}">
+            <a class="text-[13px] font-bold tracking-widest uppercase font-manrope text-decoration-none transition-all hover:text-primary {% if request.path == '/kategori/'|add:cat.slug|add:'/' %}text-primary border-b-2 border-primary pb-1{% else %}text-slate-500 hover:opacity-80{% endif %}" href="{% url 'category_list' cat.slug %}">
                 {{ cat.name }}
             </a>
         {% endfor %}
