@@ -33,9 +33,9 @@
                 {% endif %}
                 <h3 class="text-sm font-bold text-slate-900 m-0 leading-tight">{{ product.name }}</h3>
                 <p class="text-xl font-display font-black text-primary mt-2 m-0">{{ product.price }} <span class="text-xs">TL</span></p>
-                <a href="{% url 'add_to_cart' product.id %}" class="mt-4 block py-2.5 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl text-[10px] uppercase tracking-widest transition-all text-decoration-none active:scale-95 shadow-lg shadow-primary/20">
+                <button data-ajax-cart data-url="{% url 'add_to_cart' product.id %}" data-name="{{ product.name }}" class="mt-4 w-full py-2.5 bg-primary hover:bg-blue-600 text-white font-bold rounded-2xl text-[10px] uppercase tracking-widest transition-all active:scale-95 shadow-lg shadow-primary/20 border-0 cursor-pointer">
                     Sepete Ekle
-                </a>
+                </button>
             </div>
             {% endfor %}
         </div>

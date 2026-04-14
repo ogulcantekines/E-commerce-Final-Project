@@ -1,11 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}
-    {% if query %}Arama: {{ query }}
-    {% elif category %}{{ category.name }}
-    {% else %}Ürünler{% endif %} | OnlineShop
-{% endblock %}
+{% block title %}{% if query %}Arama: {{ query }}{% elif category %}{{ category.name }}{% else %}Ürünler{% endif %} | OnlineShop{% endblock %}
+{% block meta_description %}{% if query %}"{{ query }}" için arama sonuçları - OnlineShop'ta en güncel teknoloji ürünleri.{% elif category %}{{ category.name }} kategorisindeki tüm ürünler - OnlineShop'ta en iyi fiyatlarla.{% else %}OnlineShop ürün listesi{% endif %}{% endblock %}
+{% block og_title %}{% if query %}Arama: {{ query }}{% elif category %}{{ category.name }}{% else %}Ürünler{% endif %} | OnlineShop{% endblock %}
 
 {% block content %}
 <main class="pt-[70px] bg-[#fdfdfd] min-h-screen">
@@ -139,9 +137,9 @@
                                 <span class="material-icons-round text-xl">compare_arrows</span>
                             </a>
                             {% endif %}
-                            <a href="{% url 'add_to_cart' product.id %}" class="w-12 h-12 bg-primary hover:bg-blue-600 text-white flex items-center justify-center rounded-2xl transition-all shadow-lg shadow-primary/20 active:scale-[0.95] text-decoration-none">
+                            <button data-ajax-cart data-url="{% url 'add_to_cart' product.id %}" data-name="{{ product.name }}" class="w-12 h-12 bg-primary hover:bg-blue-600 text-white flex items-center justify-center rounded-2xl transition-all shadow-lg shadow-primary/20 active:scale-[0.95] border-0 cursor-pointer">
                                 <span class="material-icons-round text-xl">shopping_cart</span>
-                            </a>
+                            </button>
                         </div>
                     </div>
                     {% empty %}

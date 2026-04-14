@@ -204,9 +204,9 @@
                         <a href="{% url 'product_detail' product.slug %}" class="flex-grow py-2.5 rounded-full border border-slate-200 text-slate-600 hover:bg-primary hover:text-white hover:border-primary hover:scale-[1.03] hover:shadow-lg hover:shadow-primary/20 font-bold text-[10px] uppercase tracking-wider transition-all duration-300 text-decoration-none text-center transform active:scale-95">
                             İncele
                         </a>
-                        <a href="{% url 'add_to_cart' product.id %}" class="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/10 hover:bg-blue-600 hover:scale-110 hover:shadow-primary/40 active:scale-90 transition-all duration-300 text-decoration-none" title="Sepete Ekle">
+                        <button data-ajax-cart data-url="{% url 'add_to_cart' product.id %}" data-name="{{ product.name }}" class="w-11 h-11 rounded-full bg-primary text-white flex items-center justify-center shadow-lg shadow-primary/10 hover:bg-blue-600 hover:scale-110 hover:shadow-primary/40 active:scale-90 transition-all duration-300 border-0 cursor-pointer" title="Sepete Ekle">
                             <span class="material-icons-round text-xl">add_shopping_cart</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
             </div>

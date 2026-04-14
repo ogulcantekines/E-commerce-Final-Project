@@ -61,9 +61,7 @@
         <a href="{% url 'cart' %}" class="flex items-center gap-2 pl-3 pr-4 py-2 bg-primary text-white rounded-full hover:bg-blue-600 hover:scale-105 active:scale-95 duration-300 ease-out transition-all text-decoration-none shadow-lg hover:shadow-primary/40 shadow-primary/20 relative ml-1">
             <div class="relative">
                 <span class="material-icons-round text-xl">shopping_cart</span>
-                {% if cart_total_quantity %}
-                <span class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] flex items-center justify-center h-4 w-4 rounded-full font-bold border-2 border-primary" style="line-height:0;">{{ cart_total_quantity }}</span>
-                {% endif %}
+                <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[9px] items-center justify-center h-4 w-4 rounded-full font-bold border-2 border-primary {% if cart_total_quantity %}flex{% else %}hidden{% endif %}" style="line-height:0;">{{ cart_total_quantity|default:0 }}</span>
             </div>
             <span class="text-xs font-bold uppercase tracking-wider hidden sm:inline">Sepetim</span>
         </a>

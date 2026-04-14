@@ -46,9 +46,9 @@
                     <a href="{% url 'product_detail' fav.product.slug %}" class="flex-grow text-center py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-2xl text-[10px] uppercase tracking-widest transition-all text-decoration-none">
                         İncele
                     </a>
-                    <a href="{% url 'add_to_cart' fav.product.id %}" class="w-11 h-11 bg-primary hover:bg-blue-600 text-white flex items-center justify-center rounded-2xl transition-all shadow-lg shadow-primary/20 text-decoration-none">
+                    <button data-ajax-cart data-url="{% url 'add_to_cart' fav.product.id %}" data-name="{{ fav.product.name }}" class="w-11 h-11 bg-primary hover:bg-blue-600 text-white flex items-center justify-center rounded-2xl transition-all shadow-lg shadow-primary/20 border-0 cursor-pointer">
                         <span class="material-icons-round text-lg">shopping_cart</span>
-                    </a>
+                    </button>
                 </div>
             </div>
             {% endfor %}

@@ -4,8 +4,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}E-Ticaret{% endblock %}</title>
-    
+    <title>{% block title %}OnlineShop | Teknoloji Ürünleri{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}OnlineShop - Telefon, Tablet, Notebook ve Aksesuar kategorilerinde en güncel teknoloji ürünleri.{% endblock %}">
+    <meta name="keywords" content="{% block meta_keywords %}telefon, tablet, notebook, aksesuar, teknoloji, online alışveriş{% endblock %}">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OnlineShop">
+    <meta property="og:title" content="{% block og_title %}OnlineShop | Teknoloji Ürünleri{% endblock %}">
+    <meta property="og:description" content="{% block og_description %}OnlineShop - Telefon, Tablet, Notebook ve Aksesuar kategorilerinde en güncel teknoloji ürünleri.{% endblock %}">
+    <meta property="og:image" content="{% block og_image %}{% static 'images/logo.avif' %}{% endblock %}">
+
     <link rel="stylesheet" href="{% static 'css/bootstrap/css/bootstrap.min.css' %}" />
     <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
  
@@ -81,7 +90,79 @@
         from { opacity: 0; transform: translateY(8px); }
         to   { opacity: 1; transform: translateY(0); }
     }
+    #cart-toast {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        z-index: 99999;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.3s ease, bottom 0.3s ease;
+    }
+    #cart-toast.show {
+        opacity: 1;
+        pointer-events: all;
+        bottom: 2rem;
+    }
 </style>
+
+<!-- Toast Bildirimi -->
+<div id="cart-toast" class="bg-slate-900 text-white px-5 py-4 rounded-2xl shadow-2xl flex items-center gap-3 min-w-[280px]">
+    <div class="w-9 h-9 rounded-xl bg-green-500 flex items-center justify-center flex-shrink-0">
+        <span class="material-icons-round text-white text-lg">check</span>
+    </div>
+    <div>
+        <p class="text-[11px] font-black uppercase tracking-widest text-slate-400 m-0 leading-none mb-1">Sepete Eklendi</p>
+        <p id="cart-toast-name" class="text-sm font-bold text-white m-0"></p>
+    </div>
+    <a href="{% url 'cart' %}" class="ml-auto text-[10px] font-black uppercase tracking-widest text-primary hover:text-blue-400 transition-colors text-decoration-none flex-shrink-0">Sepete Git</a>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const toast = document.getElementById('cart-toast');
+    const toastName = document.getElementById('cart-toast-name');
+    let toastTimer;
+
+    function showToast(name) {
+        toastName.textContent = name;
+        toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => toast.classList.remove('show'), 3000);
+    }
+
+    function updateCartBadge(total) {
+        const badge = document.getElementById('cart-badge');
+        if (badge) {
+            badge.textContent = total;
+            badge.classList.toggle('hidden', total === 0);
+            badge.classList.toggle('flex', total > 0);
+        }
+    }
+
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('[data-ajax-cart]');
+        if (!btn) return;
+        e.preventDefault();
+
+        const url = btn.dataset.url;
+        const name = btn.dataset.name;
+
+        fetch(url, {
+            method: 'GET',
+            headers: { 'X-Requested-With': 'XMLHttpRequest' },
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                showToast(data.product_name);
+                updateCartBadge(data.cart_total);
+            }
+        })
+        .catch(() => { window.location.href = url; });
+    });
+});
+</script>
 
 </body>
 </html>

@@ -6,6 +6,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db.models import Q
 from django.contrib.auth.forms import PasswordChangeForm
+from django.http import JsonResponse
 from decimal import Decimal
 from .models import Category, Product, Slider, Order, OrderItem, UserProfile, Review, Favorite
 
@@ -135,6 +136,9 @@ def add_to_cart(request, product_id):
     cart_session[p_id] = cart_session.get(p_id, 0) + 1
     request.session['cart'] = cart_session
     request.session.modified = True
+    cart_total = sum(cart_session.values())
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return JsonResponse({'success': True, 'product_name': product.name, 'cart_total': cart_total})
     messages.success(request, f"{product.name} sepete eklendi!")
     return redirect('cart')
 

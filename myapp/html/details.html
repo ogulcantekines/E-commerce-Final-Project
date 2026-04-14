@@ -1,7 +1,12 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} {{ product.name }} | OnlineShop {% endblock %}
+{% block title %}{{ product.name }} | OnlineShop{% endblock %}
+{% block meta_description %}{{ product.name }} - {{ product.brand }} - {{ product.price }} TL. {{ product.description|truncatechars:150 }}{% endblock %}
+{% block meta_keywords %}{{ product.name }}, {{ product.brand }}, {{ product.category.name }}, online alışveriş{% endblock %}
+{% block og_title %}{{ product.name }} | OnlineShop{% endblock %}
+{% block og_description %}{{ product.description|truncatechars:200 }}{% endblock %}
+{% if product.image %}{% block og_image %}{{ request.scheme }}://{{ request.get_host }}{{ product.image.url }}{% endblock %}{% endif %}
 
 {% block content %}
 <main class="pt-[70px] bg-slate-50/30 min-h-screen">
@@ -80,10 +85,10 @@
                 <!-- Butonlar -->
                 <div class="px-8 py-6 flex gap-3">
                     {% if product.stock > 0 %}
-                    <a href="{% url 'add_to_cart' product.id %}" class="flex-grow bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 text-[11px] uppercase tracking-widest text-decoration-none group active:scale-[0.98]">
+                    <button data-ajax-cart data-url="{% url 'add_to_cart' product.id %}" data-name="{{ product.name }}" class="flex-grow bg-primary hover:bg-blue-600 text-white font-bold py-3 rounded-2xl transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 text-[11px] uppercase tracking-widest group active:scale-[0.98] border-0 cursor-pointer">
                         <span class="material-icons-round text-base group-hover:scale-110 transition-transform">shopping_cart</span>
                         Sepete Ekle
-                    </a>
+                    </button>
                     {% else %}
                     <div class="flex-grow bg-slate-100 text-slate-400 font-bold py-3 rounded-2xl flex items-center justify-center gap-2 text-[11px] uppercase tracking-widest cursor-not-allowed">
                         <span class="material-icons-round text-base">remove_shopping_cart</span>
